@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wdth,wght@0,87.5,500;1,87.5,500&display=swap');
+
+:root {
+    --text-color: #030712;    
+}
+
+p, a {
+    font-family: sans-serif;
+    color: #1F2937;
+    font-size: 15px;
+}

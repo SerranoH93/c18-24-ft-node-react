@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id               Int            @id @default(autoincrement())
+  email            String         @unique
+  first_name       String
+  last_name        String
+  genre            String
+  password         String
+  role             String
+  avatar_url       String
+  celebrities      celebrities?
+  events           users_events[]
+}
+
+model celebrities {
+  id               Int            @id @default(autoincrement())
+  celebrity_alias  String         @unique
+  id_number        String
+  birthdate        String
+  active_region    String
+  category         String
+  id_image_url     String
+  users            users          @relation(fields: [user_id], references: [id])
+  user_id          Int            @unique
+  events           events[]
+}
+
+model events {
+  id               Int            @id @default(autoincrement())
+  name             String         @unique
+  about            String
+  date             DateTime
+  location         String
+  type             String
+  event_poster_url String
+  celebrities      celebrities    @relation(fields: [celebrity_id], references: [id])
+  celebrity_id     Int
+  users            users_events[]
+}
+
+model users_events {
+  id               Int            @id @default(autoincrement())
+  users            users          @relation(fields: [user_id], references: [id])
+  user_id          Int
+  events           events         @relation(fields: [event_id], references: [id])
+  event_id         Int
+}
