@@ -73,22 +73,6 @@ export default function Register() {
 
             <form onSubmit={onSubmit} className='flex flex-col '>
                 <Input
-                    label="Documento a tu nombre"
-                    name='email'
-                    register={register}
-                    placeholder='Ingresa tu correo'
-                    type='file'
-                    errors={errors}
-                />
-                <Input
-                    label="Fecha de nacimiento"
-                    name='email'
-                    register={register}
-                    placeholder='Ingresa tu correo'
-                    type='date'
-                    errors={errors}
-                />
-                <Input
                     label="Email"
                     name='email'
                     register={register}
