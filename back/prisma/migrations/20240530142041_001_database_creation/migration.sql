@@ -6,7 +6,7 @@ CREATE TABLE "users" (
     "last_name" TEXT NOT NULL,
     "genre" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "role" TEXT NOT NULL,
+    "role" TEXT NOT NULL DEFAULT 'follower',
     "avatar_url" TEXT NOT NULL
 );
 

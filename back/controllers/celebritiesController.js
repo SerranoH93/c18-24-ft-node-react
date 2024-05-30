@@ -1,22 +1,8 @@
 import prisma from "../utils/prisma.js";
 import uploadImage from "../utils/cloudinary.js";
-import checkRole from "../utils/roleHelper.js";
 
 export const createCelebrity = async (req, res) => {
   try {
-    const { email, user_id, celebrity_alias, first_name, last_name } = req.body;
-    
-    const user = await prisma.users.findUnique({
-      where: {
-        id: parseInt(user_id),
-      },
-    });
-
-    if (!user || user.email !== email) {
-      await prisma.$disconnect();
-      return res.status(400).json({ message: "El ID de usuario y el correo electrónico no coinciden." });
-    }
-
     // Validate if the celebrity alias already exists. This must be done before the celebrity creation because the id_image_url has to be provided by a successful image upload and is required as a key in the req object
     const createdCelebrity = await prisma.celebrities.findUnique({
       where: {
@@ -37,9 +23,11 @@ export const createCelebrity = async (req, res) => {
     );
     req.body.id_image_url = uploadResult.secure_url;
 
+    req.body.user_id = Number(req.body.user_id);
+
     await prisma.users.update({
       where: {
-        email: req.body.email,
+        id: req.body.user_id,
       },
       data: {
         role: "celebrity",
@@ -51,7 +39,7 @@ export const createCelebrity = async (req, res) => {
     if (req.body.first_name) {
       await prisma.users.update({
         where: {
-          email: req.body.email,
+          id: req.body.user_id,
         },
         data: {
           first_name: req.body.first_name,
@@ -66,7 +54,7 @@ export const createCelebrity = async (req, res) => {
     if (req.body.last_name) {
       await prisma.users.update({
         where: {
-          email: req.body.email,
+          id: req.body.user_id,
         },
         data: {
           last_name: req.body.last_name,
@@ -77,10 +65,6 @@ export const createCelebrity = async (req, res) => {
 
       delete req.body.last_name;
     }
-
-    delete req.body.email;
-
-    req.body.user_id = Number(req.body.user_id);
 
     await prisma.celebrities.create({
       data: req.body,
@@ -97,17 +81,14 @@ export const createCelebrity = async (req, res) => {
 };
 
 export async function getAllCelebrities(req, res) {
-  const usersCelebrities = await prisma.celebrities.findMany();
+  const allCelebrities = await prisma.celebrities.findMany();
 
   await prisma.$disconnect();
 
-  res.status(200).json({
-    success: true,
-    data: usersCelebrities,
-  });
+  res.status(200).json({ allCelebrities });
 }
 
-export async function findEventById(req, res) {
+export async function findCelebrityById(req, res) {
   const { id } = req.params;
 
   try {
