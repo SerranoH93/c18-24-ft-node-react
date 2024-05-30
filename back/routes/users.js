@@ -1,6 +1,10 @@
 import express from "express";
 import checkAuthorization from "../middlewares/authorizationMiddleware.js";
-import { getAllUsersPagination, findUseryId, getAllUsers } from "../controllers/usersController.js";
+import {
+  getAllUsersPagination,
+  findUseryId,
+  getAllUsers,
+} from "../controllers/usersController.js";
 
 const router = express.Router();
 

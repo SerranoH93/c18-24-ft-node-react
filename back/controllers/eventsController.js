@@ -1,36 +1,43 @@
 import prisma from "../utils/prisma.js";
 import uploadImage from "../utils/cloudinary.js";
 
-export async function findEventyId(req, res) {
-  const { id } = req.params;
-  const token = req.headers.authorization.split(" ")[1];
-
-  const hasRequiredRole = await checkRole(token, ["celebrity", "admin", "follower"]);
-
-  if (!hasRequiredRole) {
-    return res.status(401).json({ message: "No está autorizado" });
-  }
-
+export const createEvent = async (req, res) => {
   try {
-    const event = await prisma.events.findUnique({
-      where: { id: parseInt(id) },
+    // Validate if the event name already exists. This must be done before the event creation because the event_poster_url has to be provided by a successful image upload and is required as a key in the req object
+    const createdEvent = await prisma.events.findUnique({
+      where: { name: req.body.name },
     });
 
-    if (!user) {
-      return res.status(404).json({ message: "Evento no encontrado" });
+    await prisma.$disconnect();
+
+    if (createdEvent) {
+      return res.status(409).json({ message: "Evento ya existe" });
     }
 
-    res.status(200).json({
-      success: true,
-      data: event,
-    });
-    await prisma.$disconnect();
-  } catch (error) {
-    res.status(500).json({ message: "Error al buscar el evento", error });
-  } 
-}
+    if (req.files) {
+      const uploadResult = await uploadImage(
+        "events",
+        req.body.name,
+        req.files.data
+      );
+      req.body.event_poster_url = uploadResult.secure_url;
+    }
 
-export async function getEventsPagination(req, res) {
+    req.body.celebrity_id = Number(req.body.celebrity_id);
+
+    await prisma.events.create({ data: req.body });
+
+    await prisma.$disconnect();
+
+    return res.status(201).json({ message: "Evento creado" });
+  } catch (error) {
+    await prisma.$disconnect();
+
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+export async function getAllEventsPaginated(req, res) {
   const token = req.headers.authorization.split(" ")[1];
 
   const hasRequiredRole = await checkRole(token, [
@@ -80,38 +87,35 @@ export async function getEventsPagination(req, res) {
   }
 }
 
-export const createEvent = async (req, res) => {
+export async function findEventyId(req, res) {
+  const { id } = req.params;
+  const token = req.headers.authorization.split(" ")[1];
+
+  const hasRequiredRole = await checkRole(token, [
+    "celebrity",
+    "admin",
+    "follower",
+  ]);
+
+  if (!hasRequiredRole) {
+    return res.status(401).json({ message: "No está autorizado" });
+  }
+
   try {
-    // Validate if the event name already exists. This must be done before the event creation because the event_poster_url has to be provided by a successful image upload and is required as a key in the req object
-    const createdEvent = await prisma.events.findUnique({
-      where: { name: req.body.name },
+    const event = await prisma.events.findUnique({
+      where: { id: parseInt(id) },
     });
 
-    await prisma.$disconnect();
-
-    if (createdEvent) {
-      return res.status(409).json({ message: "Evento ya existe" });
+    if (!user) {
+      return res.status(404).json({ message: "Evento no encontrado" });
     }
 
-    if (req.files) {
-      const uploadResult = await uploadImage(
-        "events",
-        req.body.name,
-        req.files.data
-      );
-      req.body.event_poster_url = uploadResult.secure_url;
-    }
-
-    req.body.celebrity_id = Number(req.body.celebrity_id);
-
-    await prisma.events.create({ data: req.body });
-
+    res.status(200).json({
+      success: true,
+      data: event,
+    });
     await prisma.$disconnect();
-
-    return res.status(201).json({ message: "Evento creado" });
   } catch (error) {
-    await prisma.$disconnect();
-
-    return res.status(400).json({ message: error.message });
+    res.status(500).json({ message: "Error al buscar el evento", error });
   }
-};
+}
