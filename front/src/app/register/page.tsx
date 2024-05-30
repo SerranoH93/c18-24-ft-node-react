@@ -72,15 +72,82 @@ export default function Register() {
             </div>
 
             <form onSubmit={onSubmit} className='flex flex-col '>
-                <Input name='email' register={register} placeholder='Ingresa tu correo' type='email' errors={errors} />
-                <Input name='name' register={register} placeholder='Tu nombre' type='text' errors={errors} />
-                <Input name='lastname' register={register} placeholder='Tu apellido' type='text' errors={errors} />
-                <Input name='gender' register={register} type='select' gendersOptions={gendersOptions} errors={errors} />
-                <Input name='password' register={register} placeholder='Ingresa tu contraseña' type={passwordVisible ? 'text' : 'password'} errors={errors} icon={<button type="button" onClick={togglePasswordVisibility}>{passwordVisible ? <img src="/visibility.svg" alt="" /> : <img src="/visibility.svg" alt="" />}</button>} />
-                <Input name='confirmPassword' register={register} placeholder='Repetir contraseña' type={passwordVisible ? 'text' : 'password'} errors={errors} icon={<button type="button" onClick={togglePasswordVisibility}>{passwordVisible ? <img src="/visibility.svg" alt="" /> : <img src="/visibility.svg" alt="" />}</button>} />
-                <div className="flex flex-col items-center">
-                    <Input name='artistCheck' register={register} placeholder='Soy artista' label="Soy artista y quiero tener mi perfil" type='checkbox' errors={errors} />
-                </div>
+                <Input
+                    label="Documento a tu nombre"
+                    name='email'
+                    register={register}
+                    placeholder='Ingresa tu correo'
+                    type='file'
+                    errors={errors}
+                />
+                <Input
+                    label="Fecha de nacimiento"
+                    name='email'
+                    register={register}
+                    placeholder='Ingresa tu correo'
+                    type='date'
+                    errors={errors}
+                />
+                <Input
+                    label="Email"
+                    name='email'
+                    register={register}
+                    placeholder='Ingresa tu correo'
+                    type='email'
+                    errors={errors}
+                />
+                <Input
+                    label="Nombres"
+                    name='name'
+                    register={register}
+                    placeholder='Tu nombre'
+                    type='text'
+                    errors={errors}
+                />
+                <Input
+                    label="Apellidos"
+                    name='lastname'
+                    register={register}
+                    placeholder='Tu apellido'
+                    type='text'
+                    errors={errors}
+                />
+                <Input
+                    label="Genero"
+                    name='gender'
+                    register={register}
+                    type='select'
+                    gendersOptions={gendersOptions}
+                    errors={errors}
+                />
+                <Input
+                    label="Contraseña"
+                    name='password'
+                    register={register}
+                    placeholder='Ingresa tu contraseña'
+                    type={passwordVisible ? 'text' : 'password'}
+                    errors={errors}
+                    icon={<button type="button" onClick={togglePasswordVisibility}>{passwordVisible ? <img src="/visibility.svg" alt="" /> : <img src="/visibility.svg" alt="" />}</button>}
+                />
+                <Input
+                    label="Confirmar contraseña"
+                    name='confirmPassword'
+                    register={register}
+                    placeholder='Repetir contraseña'
+                    type={passwordVisible ? 'text' : 'password'}
+                    errors={errors}
+                    icon={<button type="button" onClick={togglePasswordVisibility}>{passwordVisible ? <img src="/visibility.svg" alt="" /> : <img src="/visibility.svg" alt="" />}</button>}
+                />
+
+                <Input
+                    name='artistCheck'
+                    register={register}
+                    placeholder='Soy artista'
+                    label="Soy artista y quiero tener mi perfil"
+                    type='checkbox'
+                    errors={errors}
+                />
+
 
                 <button type='submit' className="h-16 bg-black text-gray-100 rounded-full mt-7">Registrate</button>
             </form>
