@@ -69,7 +69,6 @@ export const register = async (req, res) => {
     }
 
     req.body.password = await passwordHasher(req.body.password);
-    req.body.role = "follower";
 
     await prisma.users.create({
       data: req.body,

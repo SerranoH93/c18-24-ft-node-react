@@ -1,8 +1,22 @@
 import prisma from "../utils/prisma.js";
 import uploadImage from "../utils/cloudinary.js";
+import checkRole from "../utils/roleHelper.js";
 
 export const createCelebrity = async (req, res) => {
   try {
+    const { email, user_id, celebrity_alias, first_name, last_name } = req.body;
+    
+    const user = await prisma.users.findUnique({
+      where: {
+        id: parseInt(user_id),
+      },
+    });
+
+    if (!user || user.email !== email) {
+      await prisma.$disconnect();
+      return res.status(400).json({ message: "El ID de usuario y el correo electrónico no coinciden." });
+    }
+
     // Validate if the celebrity alias already exists. This must be done before the celebrity creation because the id_image_url has to be provided by a successful image upload and is required as a key in the req object
     const createdCelebrity = await prisma.celebrities.findUnique({
       where: {
@@ -81,3 +95,37 @@ export const createCelebrity = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
+
+export async function getAllCelebrities(req, res) {
+  const usersCelebrities = await prisma.celebrities.findMany();
+
+  await prisma.$disconnect();
+
+  res.status(200).json({
+    success: true,
+    data: usersCelebrities,
+  });
+}
+
+export async function findEventById(req, res) {
+  const { id } = req.params;
+
+  try {
+    const celebrity = await prisma.celebrities.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!celebrity) {
+      return res.status(404).json({ message: "Celebridad no encontrada" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: celebrity,
+    });
+
+    await prisma.$disconnect();
+  } catch (error) {
+    res.status(500).json({ message: "Error al buscar el celebridad", error });
+  }
+}

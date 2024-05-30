@@ -20,7 +20,7 @@ model users {
   last_name        String
   genre            String
   password         String
-  role             String
+  role             String         @default("follower")
   avatar_url       String
   celebrities      celebrities?
   events           users_events[]
