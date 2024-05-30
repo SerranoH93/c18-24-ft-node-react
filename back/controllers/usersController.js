@@ -43,7 +43,7 @@ export async function getAllUsersPagination(req, res) {
     return res.status(401).json({ message: "No está autorizado" });
   }
 
-  const take = parseInt(req.query.take) || 2;
+  const take = parseInt(req.query.take) || 10;
   const page = parseInt(req.query.page) || 1;
 
   const skip = (page - 1) * take;
