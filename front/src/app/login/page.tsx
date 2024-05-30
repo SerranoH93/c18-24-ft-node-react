@@ -51,8 +51,23 @@ export default function Login() {
             </div>
 
             <form onSubmit={onSubmit} className='flex flex-col mt-7'>
-                <Input name='email' register={register} placeholder='Ingresa tu correo' type='email' errors={errors} />
-                <Input name='password' register={register} placeholder='Ingresa tu contraseña' type={passwordVisible ? 'text' : 'password'} errors={errors} icon={<button type="button" onClick={togglePasswordVisibility}>{passwordVisible ? <img src="/visibility.svg" alt="" /> : <img src="/visibility.svg" alt="" />}</button>} />
+                <Input
+                    label="Email"
+                    name='email'
+                    register={register}
+                    placeholder='Ingresa tu correo'
+                    type='email'
+                    errors={errors}
+                />
+                <Input
+                    label="Contraseña"
+                    name='password'
+                    register={register}
+                    placeholder='Ingresa tu contraseña'
+                    type={passwordVisible ? 'text' : 'password'}
+                    errors={errors}
+                    icon={<button type="button" onClick={togglePasswordVisibility}>{passwordVisible ? <img src="/visibility.svg" alt="" /> : <img src="/visibility.svg" alt="" />}</button>}
+                />
 
                 <a className='text-right mt-8' href="#">¿Olvidaste tu contraseña?</a>
 
