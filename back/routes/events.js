@@ -1,5 +1,5 @@
 import express from "express";
-import parseFormMultipart from "../middlewares/parseRegisterFormMiddleware.js";
+import parseMultipartForm from "../middlewares/parseMultipartFormMiddleware.js";
 import eventCreationValidationMiddleware from "../middlewares/eventCreationValidationMiddleware.js";
 import { createEvent, findEventyId, getAllEventsPagination } from "../controllers/eventsController.js";
 
@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post(
   "/create",
-  parseFormMultipart,
+  parseMultipartForm,
   eventCreationValidationMiddleware,
   createEvent
 );

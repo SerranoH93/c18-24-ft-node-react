@@ -7,13 +7,27 @@ cloudinary.config({
   api_secret: process.env.API_SECRET,
 });
 
-export const uploadUserAvatar = async (userEmail, fileBuffer) => {
+const uploadImage = async (model, uniqueField, fileBuffer) => {
   const result = await new Promise((res, rej) => {
+    const options = {};
+
+    switch (model) {
+      case "users":
+        options.public_id = `${uniqueField}_avatar`;
+        break;
+      case "celebrities":
+        options.public_id = `${uniqueField}_id`;
+        break;
+      case "events":
+        options.public_id = `${uniqueField}_id`;
+        break;
+    }
+
     cloudinary.uploader
       .upload_stream(
         {
-          public_id: `${userEmail}_avatar`,
-          folder: "users",
+          ...options,
+          folder: model,
           overwrite: true,
         },
         (error, uploadResult) => {
@@ -30,48 +44,4 @@ export const uploadUserAvatar = async (userEmail, fileBuffer) => {
   return result;
 };
 
-export const uploadCelebrityId = async (celebrityAlias, fileBuffer) => {
-  const result = await new Promise((res, rej) => {
-    cloudinary.uploader
-      .upload_stream(
-        {
-          public_id: `${celebrityAlias}_id`,
-          folder: "celebrities",
-          overwrite: true,
-        },
-        (error, uploadResult) => {
-          if (error) {
-            return rej(error);
-          }
-
-          return res(uploadResult);
-        }
-      )
-      .end(fileBuffer);
-  });
-
-  return result;
-};
-
-export const uploadEventPoster = async (eventName, fileBuffer) => {
-  const result = await new Promise((res, rej) => {
-    cloudinary.uploader
-      .upload_stream(
-        {
-          public_id: `${eventName}_id`,
-          folder: "events",
-          overwrite: true,
-        },
-        (error, uploadResult) => {
-          if (error) {
-            return rej(error);
-          }
-
-          return res(uploadResult);
-        }
-      )
-      .end(fileBuffer);
-  });
-
-  return result;
-};
+export default uploadImage;

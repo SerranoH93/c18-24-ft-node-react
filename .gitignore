@@ -75,6 +75,7 @@ back/.env
 
 # Local db
 back/prisma/*.db
+back/prisma/*.db-journal
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

@@ -1,7 +1,7 @@
 import prisma from "../utils/prisma.js";
 import bcrypt from "bcryptjs";
 import { tokenSign } from "../utils/tokenHelper.js";
-import { uploadUserAvatar } from "../utils/cloudinary.js";
+import uploadImage from "../utils/cloudinary.js";
 import passwordHasher from "../utils/hashHelper.js";
 
 export const login = async (req, res) => {
@@ -57,8 +57,16 @@ export const register = async (req, res) => {
       return res.status(409).json({ message: "Email ya existe" });
     }
 
-    const uploadResult = await uploadUserAvatar(req.body.email, req.files.data);
-    req.body.avatar_url = uploadResult.secure_url;
+    if (req.files) {
+      const uploadResult = await uploadImage(
+        "users",
+        req.body.email,
+        req.files.data
+      );
+      req.body.avatar_url = uploadResult.secure_url;
+    } else {
+      req.body.avatar_url = `https://source.boringavatars.com/beam/160/${req.body.first_name}%20${req.body.last_name}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51`;
+    }
 
     req.body.password = await passwordHasher(req.body.password);
 
@@ -70,6 +78,7 @@ export const register = async (req, res) => {
 
     return res.status(201).json({ message: "Usuario creado" });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({ message: error.message });
   }
 };

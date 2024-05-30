@@ -1,5 +1,5 @@
 import prisma from "../utils/prisma.js";
-import { uploadEventPoster } from "../utils/cloudinary.js";
+import uploadImage from "../utils/cloudinary.js";
 
 export async function findEventyId(req, res) {
   const { id } = req.params;
@@ -93,8 +93,14 @@ export const createEvent = async (req, res) => {
       return res.status(409).json({ message: "Evento ya existe" });
     }
 
-    const uploadResult = await uploadEventPoster(req.body.name, req.files.data);
-    req.body.event_poster_url = uploadResult.secure_url;
+    if (req.files) {
+      const uploadResult = await uploadImage(
+        "events",
+        req.body.name,
+        req.files.data
+      );
+      req.body.event_poster_url = uploadResult.secure_url;
+    }
 
     req.body.celebrity_id = Number(req.body.celebrity_id);
 

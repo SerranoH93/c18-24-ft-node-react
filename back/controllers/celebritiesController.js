@@ -1,5 +1,5 @@
 import prisma from "../utils/prisma.js";
-import { uploadCelebrityId } from "../utils/cloudinary.js";
+import uploadImage from "../utils/cloudinary.js";
 import checkRole from "../utils/roleHelper.js";
 
 export const createCelebrity = async (req, res) => {
@@ -30,7 +30,8 @@ export const createCelebrity = async (req, res) => {
       return res.status(409).json({ message: "Celebridad ya existe" });
     }
 
-    const uploadResult = await uploadCelebrityId(
+    const uploadResult = await uploadImage(
+      "celebrities",
       req.body.celebrity_alias,
       req.files.data
     );

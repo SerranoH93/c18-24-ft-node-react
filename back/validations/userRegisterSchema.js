@@ -20,14 +20,15 @@ const userRegisterSchema = z
         message: "Tu nombre no debe tener más de 50 caracteres",
       }),
     last_name: z
-      .string()
+      .string({
+        required_error: "Apellido obligatorio",
+      })
       .min(3, {
         message: "Tu apellido debe tener al menos 3 caracteres",
       })
       .max(50, {
         message: "Tu apellido no debe tener más de 50 caracteres",
-      })
-      .optional(),
+      }),
     genre: z.enum(["male", "female", "other"], {
       message: "Género inválido",
     }),
