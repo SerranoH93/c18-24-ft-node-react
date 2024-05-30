@@ -36,13 +36,6 @@ const celebrityCreationSchema = z
     category: z.string({
       required_error: "Categoría obligatoria",
     }),
-    email: z
-      .string({
-        required_error: "Email obligatorio",
-      })
-      .email({
-        message: "Email invalido",
-      }),
     user_id: z.coerce.number({
       message: "ID de usuario debe ser un número",
     }),

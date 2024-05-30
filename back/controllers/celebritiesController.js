@@ -1,5 +1,5 @@
 import prisma from "../utils/prisma.js";
-import { uploadCelebrityId } from "../utils/cloudinary.js";
+import uploadImage from "../utils/cloudinary.js";
 
 export const createCelebrity = async (req, res) => {
   try {
@@ -16,15 +16,18 @@ export const createCelebrity = async (req, res) => {
       return res.status(409).json({ message: "Celebridad ya existe" });
     }
 
-    const uploadResult = await uploadCelebrityId(
+    const uploadResult = await uploadImage(
+      "celebrities",
       req.body.celebrity_alias,
       req.files.data
     );
     req.body.id_image_url = uploadResult.secure_url;
 
+    req.body.user_id = Number(req.body.user_id);
+
     await prisma.users.update({
       where: {
-        email: req.body.email,
+        id: req.body.user_id,
       },
       data: {
         role: "celebrity",
@@ -36,7 +39,7 @@ export const createCelebrity = async (req, res) => {
     if (req.body.first_name) {
       await prisma.users.update({
         where: {
-          email: req.body.email,
+          id: req.body.user_id,
         },
         data: {
           first_name: req.body.first_name,
@@ -51,7 +54,7 @@ export const createCelebrity = async (req, res) => {
     if (req.body.last_name) {
       await prisma.users.update({
         where: {
-          email: req.body.email,
+          id: req.body.user_id,
         },
         data: {
           last_name: req.body.last_name,
@@ -62,10 +65,6 @@ export const createCelebrity = async (req, res) => {
 
       delete req.body.last_name;
     }
-
-    delete req.body.email;
-
-    req.body.user_id = Number(req.body.user_id);
 
     await prisma.celebrities.create({
       data: req.body,
@@ -80,3 +79,34 @@ export const createCelebrity = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
+
+export async function getAllCelebrities(req, res) {
+  const allCelebrities = await prisma.celebrities.findMany();
+
+  await prisma.$disconnect();
+
+  res.status(200).json({ allCelebrities });
+}
+
+export async function findCelebrityById(req, res) {
+  const { id } = req.params;
+
+  try {
+    const celebrity = await prisma.celebrities.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!celebrity) {
+      return res.status(404).json({ message: "Celebridad no encontrada" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: celebrity,
+    });
+
+    await prisma.$disconnect();
+  } catch (error) {
+    res.status(500).json({ message: "Error al buscar el celebridad", error });
+  }
+}

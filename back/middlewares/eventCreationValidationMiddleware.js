@@ -8,6 +8,30 @@ const eventCreationValidationMiddleware = async (req, res, next) => {
     return res.status(400).json(result.error.issues[0]);
   }
 
+  if (!req.hasOwnProperty("files")) {
+    return next();
+  }
+
+  const supportedImageFormats = [
+    "image/jpeg",
+    "image/png",
+    "image/jpg",
+    "image/webp",
+  ];
+
+  if (!supportedImageFormats.includes(req.files.mimetype)) {
+    return res.status(400).json({
+      message:
+        "Formato de imagen no válido. Solo se permiten JPEG, JPG, PNG y WEBP.",
+    });
+  }
+
+  if (req.files.size > 10 * 1024 * 1024) {
+    return res.status(400).json({
+      message: "El tamaño de la imagen no debe exceder los 10MB.",
+    });
+  }
+
   next();
 };
 

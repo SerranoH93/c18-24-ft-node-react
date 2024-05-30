@@ -37,19 +37,23 @@ export default function Register() {
 
     const Fetch = useFetch()
 
-    const onSubmit = handleSubmit(async ({ email, name, lastname, password, confirmPassword, gender }) => {
+    const onSubmit = handleSubmit(async ({ email, name, lastname, password, gender }) => {
         const formData = new FormData();
         formData.append("email", email);
-        formData.append("name", name);
-        formData.append("lastname", lastname);
+        formData.append("first_name", name);
+        formData.append("last_name", lastname);
         formData.append("password", password);
-        formData.append("confirmPasswordd", confirmPassword);
-        formData.append("gender", gender)
+        formData.append("genre", gender)
+        for (let [key, value] of Array.from(formData.entries())) {
+            console.log(`${key}: ${value}`);
+        }
+
+
 
 
         await Fetch({
-            endpoint: 'registerpet',
-            redirectRoute: '/',
+            endpoint: 'authentication/register',
+            redirectRoute: '/login',
             formData: formData,
             method: 'post'
         })

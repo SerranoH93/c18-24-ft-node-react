@@ -4,7 +4,7 @@ const checkAuthorization = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    return res.status(401).send({ message: "No está autorizado" });
+    return res.status(401).send({ message: "No hay sesión" });
   }
 
   const token = authHeader.split(" ")[1];

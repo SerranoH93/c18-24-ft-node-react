@@ -1,15 +1,22 @@
 import express from "express";
-import parseFormMultipart from "../middlewares/parseRegisterFormMiddleware.js";
+import parseMultipartForm from "../middlewares/parseMultipartFormMiddleware.js";
 import eventCreationValidationMiddleware from "../middlewares/eventCreationValidationMiddleware.js";
-import { createEvent } from "../controllers/eventsController.js";
+import checkAuthorization from "../middlewares/authorizationMiddleware.js";
+import {
+  createEvent,
+  getAllEventsPaginated,
+  findEventyId,
+} from "../controllers/eventsController.js";
 
 const router = express.Router();
 
 router.post(
   "/create",
-  parseFormMultipart,
+  parseMultipartForm,
   eventCreationValidationMiddleware,
   createEvent
 );
+router.get("/page", checkAuthorization, getAllEventsPaginated);
+router.get("/:id", checkAuthorization, findEventyId);
 
 export default router;
