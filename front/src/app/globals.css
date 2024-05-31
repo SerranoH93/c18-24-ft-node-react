@@ -13,6 +13,12 @@ a {
     color: #1f2937;
     font-size: 15px;
 }
+
+h3 {    
+    font-family: sans-serif;
+    color: #1f2937;    
+}
+
 @layer utilities {
     .custom-date-input::-webkit-calendar-picker-indicator {
         @apply w-full h-full absolute text-transparent opacity-0 pointer-events-auto m-0 left-0 top-0;

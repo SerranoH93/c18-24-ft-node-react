@@ -43,7 +43,7 @@ export default function Register() {
         formData.append("first_name", name);
         formData.append("last_name", lastname);
         formData.append("password", password);
-        formData.append("genre", gender)
+        formData.append("gender", gender)
         for (let [key, value] of Array.from(formData.entries())) {
             console.log(`${key}: ${value}`);
         }
