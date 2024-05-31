@@ -16,21 +16,20 @@ interface AuthStore {
     token: string | null;
     setUser: (user: User) => void;
     setToken: (token: string) => void;
-    clearUser: () => void;
+    logout: () => void;
 }
 
-export const useAuthStore = create<AuthStore>()(
+export const userAuthStore = create<AuthStore>()(
     persist(
         (set) => ({
             user: null,
             token: null,
             setUser: (user) => set({ user }),
             setToken: (token) => set({ token }),
-            clearUser: () => set({ user: null, token: null }),
+            logout: () => set({ user: null, token: null }),
         }),
         {
-            name: 'user-storage',
-            getStorage: () => localStorage,
+            name: 'auth-storage', // nombre en localStorage
         }
-    )
+    )     
 );

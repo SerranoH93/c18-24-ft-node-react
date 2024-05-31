@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, Method } from 'axios'
 import { useRouter } from 'next/navigation'
+import { userAuthStore } from '@/store/userAuthStore'
 
 interface AuthFetchProps {
     endpoint: string
@@ -10,7 +11,9 @@ interface AuthFetchProps {
 }
 
 export function useFetch() {
-    const router = useRouter()
+    const router = useRouter();
+    const setUser = userAuthStore((state) => state.setUser);
+    const setToken = userAuthStore((state) => state.setToken);
 
     const authRouter = async ({
         endpoint,
@@ -27,6 +30,9 @@ export function useFetch() {
                 ...options
             })
             console.log(data);
+
+            setToken(data.token);
+            setUser(data.user);
 
             if (redirectRoute) {
                 router.push(redirectRoute)
