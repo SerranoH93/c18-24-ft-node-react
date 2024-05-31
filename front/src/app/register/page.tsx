@@ -43,7 +43,7 @@ export default function Register() {
         formData.append("first_name", name);
         formData.append("last_name", lastname);
         formData.append("password", password);
-        formData.append("genre", gender)
+        formData.append("gender", gender)
         for (let [key, value] of Array.from(formData.entries())) {
             console.log(`${key}: ${value}`);
         }
@@ -74,7 +74,7 @@ export default function Register() {
             <form onSubmit={onSubmit} className='flex flex-col '>
                 <Input
                     label="Documento a tu nombre"
-                    name='email'
+                    name='documento'
                     register={register}
                     placeholder='Ingresa tu correo'
                     type='file'
@@ -82,7 +82,7 @@ export default function Register() {
                 />
                 <Input
                     label="Fecha de nacimiento"
-                    name='email'
+                    name='dob'
                     register={register}
                     placeholder='Ingresa tu correo'
                     type='date'
