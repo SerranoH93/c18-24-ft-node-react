@@ -28,8 +28,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // allows requests from different domains, protocols or ports
-app.use(cors());
-
 app.use("/", cors(corsOptions), indexRouter);
 
 // catch 404 and forward to error handler

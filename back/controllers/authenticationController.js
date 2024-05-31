@@ -78,7 +78,8 @@ export const register = async (req, res) => {
 
     return res.status(201).json({ message: "Usuario creado" });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ message: error.message });
+    await prisma.$disconnect();
+
+    return res.status(500).json({ message: error.message });
   }
 };
