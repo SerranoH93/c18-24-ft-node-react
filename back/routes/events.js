@@ -4,7 +4,7 @@ import eventCreationValidationMiddleware from "../middlewares/eventCreationValid
 import {
   createEvent,
   getAllEventsPaginated,
-  retrieveEventById,
+  retrieveEventByUUID,
 } from "../controllers/eventsController.js";
 
 const router = express.Router();
@@ -16,6 +16,6 @@ router.post(
   createEvent
 );
 router.get("/page", getAllEventsPaginated);
-router.get("/:id", retrieveEventById);
+router.get("/:uuid", retrieveEventByUUID);
 
 export default router;

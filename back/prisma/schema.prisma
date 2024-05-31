@@ -41,7 +41,8 @@ model celebrities {
 
 model events {
   id               Int            @id @default(autoincrement())
-  name             String         @unique
+  uuid             String         @unique
+  name             String
   about            String
   date             DateTime
   location         String

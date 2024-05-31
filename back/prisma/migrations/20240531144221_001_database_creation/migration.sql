@@ -26,6 +26,7 @@ CREATE TABLE "celebrities" (
 -- CreateTable
 CREATE TABLE "events" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "uuid" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "about" TEXT NOT NULL,
     "date" DATETIME NOT NULL,
@@ -55,4 +56,4 @@ CREATE UNIQUE INDEX "celebrities_celebrity_alias_key" ON "celebrities"("celebrit
 CREATE UNIQUE INDEX "celebrities_user_id_key" ON "celebrities"("user_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "events_name_key" ON "events"("name");
+CREATE UNIQUE INDEX "events_uuid_key" ON "events"("uuid");
