@@ -1,6 +1,7 @@
 "use client"
 
 import { userAuthStore } from "@/store/userAuthStore";
+import Profile from "@/components/profile";
 
 export default function Home() {
   const user = userAuthStore((state) => state.user);
@@ -16,7 +17,7 @@ export default function Home() {
       <h2>Home</h2>
       <h1>{user?.first_name}</h1>      
 
-      <div>{token===null ? <a href="/login">Iniciar Sesion</a> : <img src={user?.avatar_url} alt="" />}</div>
+      <div>{token===null ? <a href="/login">Iniciar Sesion</a> : <Profile/>} </div>
 
       <button onClick={handleLogout}>Cerrar sesión</button>  
 
