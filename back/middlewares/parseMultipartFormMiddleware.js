@@ -33,10 +33,12 @@ const parseMultipartForm = (req, res, next) => {
       return next();
     }
 
-    req.files = files.file[0];
+    if (files.hasOwnProperty("image")) {
+      req.files = files.image[0];
 
-    // Concatenate the image data chunks into a single buffer and assign it to req.files.data
-    req.files.data = Buffer.concat(buffer);
+      // Concatenate the image data chunks into a single buffer and assign it to req.files.data
+      req.files.data = Buffer.concat(buffer);
+    }
 
     next();
   });

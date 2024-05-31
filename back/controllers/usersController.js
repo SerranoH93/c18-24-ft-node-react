@@ -1,42 +1,35 @@
 import prisma from "../utils/prisma.js";
 import checkRole from "../utils/roleHelper.js";
 
-export async function findUseryId(req, res) {
-  const { id } = req.params;
+export async function getAllUsers(req, res) {
   const token = req.headers.authorization.split(" ")[1];
 
-  const hasRequiredRole = await checkRole(token, ["celebrity", "admin", "follower"]);
+  const hasRequiredRole = await checkRole(token, [
+    "celebrity",
+    "admin",
+    "follower",
+  ]);
 
   if (!hasRequiredRole) {
     return res.status(401).json({ message: "No está autorizado" });
   }
 
-  try {
-    const user = await prisma.users.findUnique({
-      where: { id: parseInt(id) },
-    });
+  const allUsers = await prisma.users.findMany();
 
-    if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
-    }
+  await prisma.$disconnect();
 
-    res.status(200).json({
-      success: true,
-      data: user,
-    });
-    await prisma.$disconnect();
-  } catch (error) {
-    res.status(500).json({ message: "Error al buscar el usuario", error });
-  } 
+  res.status(200).json({
+    data: allUsers,
+  });
 }
 
-export async function getAllUsersPagination(req, res) {
+export async function getAllUsersPaginated(req, res) {
   const token = req.headers.authorization.split(" ")[1];
 
   const hasRequiredRole = await checkRole(token, [
-    "follower",
     "celebrity",
     "admin",
+    "follower",
   ]);
 
   if (!hasRequiredRole) {
@@ -49,7 +42,7 @@ export async function getAllUsersPagination(req, res) {
   const skip = (page - 1) * take;
 
   try {
-    const usersData = await prisma.users.findMany({
+    const allUsers = await prisma.users.findMany({
       skip: skip,
       take: take,
     });
@@ -61,44 +54,57 @@ export async function getAllUsersPagination(req, res) {
     await prisma.$disconnect();
 
     res.status(200).json({
-      success: true,
       pagination: {
         totalUsers: totalUsers,
         totalPages: totalPages,
         currentPage: page,
         perPage: take,
       },
-      data: usersData,
+      data: allUsers,
     });
   } catch (error) {
     await prisma.$disconnect();
+
     res.status(500).json({
-      success: false,
-      message: "Error al obetener los usuarios",
-      error: error.message,
+      message: "Error al obtener los usuarios => " + error.message,
     });
   }
 }
 
-export async function getAllUsers(req, res) {
+export async function retrieveUserById(req, res) {
+  const { id } = req.params;
+
   const token = req.headers.authorization.split(" ")[1];
 
   const hasRequiredRole = await checkRole(token, [
-    "follower",
     "celebrity",
     "admin",
+    "follower",
   ]);
 
   if (!hasRequiredRole) {
     return res.status(401).json({ message: "No está autorizado" });
   }
 
-  const usersData = await prisma.users.findMany();
+  try {
+    const userData = await prisma.users.findUnique({
+      where: { id: parseInt(id) },
+    });
 
-  await prisma.$disconnect();
+    await prisma.$disconnect();
 
-  res.status(200).json({
-    success: true,
-    data: usersData,
-  });
+    if (!userData) {
+      return res.status(404).json({ message: "Usuario no existe" });
+    }
+
+    res.status(200).json({
+      data: userData,
+    });
+  } catch (error) {
+    await prisma.$disconnect();
+
+    res
+      .status(500)
+      .json({ message: "Error al buscar el usuario => " + error.message });
+  }
 }

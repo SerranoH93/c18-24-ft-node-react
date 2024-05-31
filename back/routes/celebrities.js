@@ -4,7 +4,7 @@ import celebrityCreationValidation from "../middlewares/celebrityCreationValidat
 import {
   createCelebrity,
   getAllCelebrities,
-  findCelebrityById,
+  retrieveCelebrityById,
 } from "../controllers/celebritiesController.js";
 
 const router = express.Router();
@@ -16,6 +16,6 @@ router.post(
   createCelebrity
 );
 router.get("/", getAllCelebrities);
-router.get("/:id", findCelebrityById);
+router.get("/:id", retrieveCelebrityById);
 
 export default router;

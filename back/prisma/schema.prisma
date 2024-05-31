@@ -18,7 +18,7 @@ model users {
   email            String         @unique
   first_name       String
   last_name        String
-  genre            String
+  gender           String
   password         String
   role             String         @default("follower")
   avatar_url       String

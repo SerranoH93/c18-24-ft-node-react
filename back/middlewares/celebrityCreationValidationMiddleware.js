@@ -8,6 +8,8 @@ const celebrityCreationValidation = async (req, res, next) => {
     return res.status(400).json(result.error.issues[0]);
   }
 
+  req.body = result.data;
+
   if (!req.hasOwnProperty("files")) {
     return res.status(400).json({ message: "La imagen del ID es obligatoria" });
   }
