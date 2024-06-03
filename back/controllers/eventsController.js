@@ -5,7 +5,6 @@ import uploadImage from "../utils/cloudinary.js";
 export const createEvent = async (req, res) => {
   try {
     req.body.uuid = crypto.randomUUID();
-    let eventPosterUrl = "https://source.boringavatars.com/beam/160/Edwin%20Test?colors=264653,2a9d8f,e9c46a,f4a261,e76f51";
 
     if (req.files) {
       const uploadResult = await uploadImage(
@@ -13,10 +12,8 @@ export const createEvent = async (req, res) => {
         req.body.name,
         req.files.data
       );
-      eventPosterUrl = uploadResult.secure_url;
+      req.body.event_poster_url = uploadResult.secure_url;
     }
-
-    req.body.event_poster_url = eventPosterUrl;
 
     await prisma.events.create({ data: req.body });
     console.log({ data: req.body })
