@@ -5,6 +5,7 @@ import uploadImage from "../utils/cloudinary.js";
 export const createEvent = async (req, res) => {
   try {
     req.body.uuid = crypto.randomUUID();
+    let eventPosterUrl = "https://source.boringavatars.com/beam/160/Edwin%20Test?colors=264653,2a9d8f,e9c46a,f4a261,e76f51";
 
     if (req.files) {
       const uploadResult = await uploadImage(
@@ -12,17 +13,20 @@ export const createEvent = async (req, res) => {
         req.body.name,
         req.files.data
       );
-      req.body.event_poster_url = uploadResult.secure_url;
+      eventPosterUrl = uploadResult.secure_url;
     }
 
+    req.body.event_poster_url = eventPosterUrl;
+
     await prisma.events.create({ data: req.body });
+    console.log({ data: req.body })
 
     await prisma.$disconnect();
 
     return res.status(201).json({ message: "Evento creado" });
   } catch (error) {
     await prisma.$disconnect();
-
+    console.log(error)
     return res.status(500).json({ message: error.message });
   }
 };
@@ -69,6 +73,23 @@ export async function retrieveEventByUUID(req, res) {
   try {
     const eventData = await prisma.events.findUnique({
       where: { uuid: uuid },
+      include: {
+        celebrities: {
+          select: {
+            id: true,
+            celebrity_alias: true,
+            active_region: true,
+            category: true,
+            users: {
+              select: {
+                first_name: true,
+                last_name: true,
+                gender: true
+              }
+            }
+          }
+        }
+      }
     });
 
     await prisma.$disconnect();
