@@ -16,7 +16,6 @@ export const createEvent = async (req, res) => {
     }
 
     await prisma.events.create({ data: req.body });
-    console.log({ data: req.body })
 
     await prisma.$disconnect();
 
