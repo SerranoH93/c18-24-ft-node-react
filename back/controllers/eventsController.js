@@ -22,7 +22,7 @@ export const createEvent = async (req, res) => {
     return res.status(201).json({ message: "Evento creado" });
   } catch (error) {
     await prisma.$disconnect();
-    console.log(error)
+
     return res.status(500).json({ message: error.message });
   }
 };
@@ -80,12 +80,13 @@ export async function retrieveEventByUUID(req, res) {
               select: {
                 first_name: true,
                 last_name: true,
-                gender: true
-              }
-            }
-          }
-        }
-      }
+                gender: true,
+                avatar_url: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     await prisma.$disconnect();
