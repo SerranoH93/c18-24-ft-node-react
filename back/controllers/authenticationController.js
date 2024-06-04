@@ -70,13 +70,13 @@ export const register = async (req, res) => {
 
     req.body.password = await passwordHasher(req.body.password);
 
-    await prisma.users.create({
+    const userCreated = await prisma.users.create({
       data: req.body,
     });
 
     await prisma.$disconnect();
 
-    return res.status(201).json({ message: "Usuario creado" });
+    return res.status(201).json({ user_id: userCreated.id });
   } catch (error) {
     await prisma.$disconnect();
 
