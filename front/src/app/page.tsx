@@ -53,7 +53,14 @@ export default function Home() {
       <section className="mt-6">
         <h3 className="text-2xl mb-2.5">Próximos eventos</h3>
         {events.map(event => (
-          <CardEvent key={event.id} id={event.id} title={event.name} date={event.date} imgUser={event.imgUser} imgEvent={event.event_poster_url} user={event.user} size="small" />
+          <CardEvent 
+            key={event.id} 
+            id={event.id} 
+            title={event.name} 
+            date={event.date} 
+            imgUser={event.imgUser} 
+            imgEvent={event.event_poster_url} 
+            user={event.user} size="small" />
         ))}
       </section>     
 
@@ -63,7 +70,14 @@ export default function Home() {
           <button className="py-2 px-4 bg-black text-gray-100 rounded-full">Ver todos</button>
         </div>        
         {events.map(event => (
-          <CardEvent key={event.id} id={event.id} title={event.name} date={event.date} imgUser={event.imgUser} imgEvent={event.event_poster_url} user={event.user} size="medium" />
+          <CardEvent 
+            key={event.id} 
+            id={event.id} 
+            title={event.name} 
+            date={event.date} 
+            imgUser={event.imgUser} 
+            imgEvent={event.event_poster_url} 
+            user={event.user} size="medium" />
         ))}
       </section>
 
