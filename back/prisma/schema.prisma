@@ -18,7 +18,7 @@ model users {
   email            String         @unique
   first_name       String
   last_name        String
-  genre            String
+  gender           String
   password         String
   role             String         @default("follower")
   avatar_url       String
@@ -41,11 +41,12 @@ model celebrities {
 
 model events {
   id               Int            @id @default(autoincrement())
-  name             String         @unique
+  uuid             String         @unique
+  name             String
   about            String
   date             DateTime
   location         String
-  type             String
+  price            Int
   event_poster_url String
   celebrities      celebrities    @relation(fields: [celebrity_id], references: [id])
   celebrity_id     Int

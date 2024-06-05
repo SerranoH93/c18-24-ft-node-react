@@ -29,7 +29,7 @@ const userRegisterSchema = z
       .max(50, {
         message: "Tu apellido no debe tener más de 50 caracteres",
       }),
-    genre: z.enum(["male", "female", "other"], {
+    gender: z.enum(["male", "female", "other"], {
       message: "Género inválido",
     }),
     password: z

@@ -23,8 +23,6 @@ export const createCelebrity = async (req, res) => {
     );
     req.body.id_image_url = uploadResult.secure_url;
 
-    req.body.user_id = Number(req.body.user_id);
-
     await prisma.users.update({
       where: {
         id: req.body.user_id,
@@ -76,7 +74,7 @@ export const createCelebrity = async (req, res) => {
   } catch (error) {
     await prisma.$disconnect();
 
-    return res.status(400).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -85,28 +83,31 @@ export async function getAllCelebrities(req, res) {
 
   await prisma.$disconnect();
 
-  res.status(200).json({ allCelebrities });
+  res.status(200).json({ data: allCelebrities });
 }
 
-export async function findCelebrityById(req, res) {
+export async function retrieveCelebrityById(req, res) {
   const { id } = req.params;
 
   try {
-    const celebrity = await prisma.celebrities.findUnique({
+    const celebrityData = await prisma.celebrities.findUnique({
       where: { id: parseInt(id) },
     });
 
-    if (!celebrity) {
-      return res.status(404).json({ message: "Celebridad no encontrada" });
+    await prisma.$disconnect();
+
+    if (!celebrityData) {
+      return res.status(404).json({ message: "Celebridad no existe" });
     }
 
     res.status(200).json({
-      success: true,
-      data: celebrity,
+      data: celebrityData,
     });
-
-    await prisma.$disconnect();
   } catch (error) {
-    res.status(500).json({ message: "Error al buscar el celebridad", error });
+    await prisma.$disconnect();
+
+    res
+      .status(500)
+      .json({ message: "Error al buscar la celebridad => " + error.message });
   }
 }

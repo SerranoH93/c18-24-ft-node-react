@@ -1,13 +1,15 @@
 "use client"
 
 import Input from "@/components/input";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { loginSchema } from '@/validations/userSchema';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { useFetch } from "@/hooks/postHook";
 
 type Inputs = {
     email: string;
+    password: string;
 }
 
 export default function Login() {
@@ -22,10 +24,22 @@ export default function Login() {
     });
 
     console.log(errors);
+    
+    const Fetch = useFetch()
 
-    const onSubmit: SubmitHandler<Inputs> = (data) => {
-        console.log(data);
-    };
+    const onSubmit = handleSubmit(async (data) => {
+        await Fetch({
+            endpoint: 'authentication/login',
+            redirectRoute: '/',
+            formData: data,
+            method: 'post',
+            options: {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }
+        })
+    })
 
     return (
         <div className="flex flex-col mt-10 ml-8 mr-8">
@@ -36,10 +50,25 @@ export default function Login() {
                 <p>con las redes sociales</p>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col mt-7'>
-                <Input name='email' register={register} placeholder='Ingresa tu correo' type='email' errors={errors} />
-                <Input name='password' register={register} placeholder='Ingresa tu contraseña' type={passwordVisible ? 'text' : 'password'} errors={errors} icon={<button type="button" onClick={togglePasswordVisibility}>{passwordVisible ? <img src="/visibility.svg" alt="" /> : <img src="/visibility.svg" alt="" />}</button>} />               
-                
+            <form onSubmit={onSubmit} className='flex flex-col mt-7'>
+                <Input
+                    label="Email"
+                    name='email'
+                    register={register}
+                    placeholder='Ingresa tu correo'
+                    type='email'
+                    errors={errors}
+                />
+                <Input
+                    label="Contraseña"
+                    name='password'
+                    register={register}
+                    placeholder='Ingresa tu contraseña'
+                    type={passwordVisible ? 'text' : 'password'}
+                    errors={errors}
+                    icon={<button type="button" onClick={togglePasswordVisibility}>{passwordVisible ? <img src="/visibility.svg" alt="" /> : <img src="/visibility.svg" alt="" />}</button>}
+                />
+
                 <a className='text-right mt-8' href="#">¿Olvidaste tu contraseña?</a>
 
                 <button type='submit' className="mt-2 h-16 bg-black text-gray-100 rounded-full" >Iniciar sesión</button>
@@ -54,7 +83,7 @@ export default function Login() {
                 <div className="mt-7">
                     <p>¿No tienes cuenta en XXXXX? <a className='font-bold underline' href="/register">Registrate</a></p>
                 </div>
-                
+
             </div>
         </div>
     )

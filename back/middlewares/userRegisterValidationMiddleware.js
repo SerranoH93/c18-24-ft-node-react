@@ -8,6 +8,8 @@ const userRegisterValidation = async (req, res, next) => {
     return res.status(400).json(result.error.issues[0]);
   }
 
+  req.body = result.data;
+
   if (!req.hasOwnProperty("files")) {
     return next();
   }

@@ -1,14 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wdth,wght@0,87.5,500;1,87.5,500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wdth,wght@0,87.5,500;1,87.5,500&display=swap");
 
 :root {
-    --text-color: #030712;    
+    --text-color: #030712;
 }
 
-p, a {
+p,
+a {
     font-family: sans-serif;
-    color: #1F2937;
+    color: #1f2937;
     font-size: 15px;
+}
+
+h3 {    
+    font-family: sans-serif;
+    color: #1f2937;    
+}
+
+@layer utilities {
+    .custom-date-input::-webkit-calendar-picker-indicator {
+        @apply w-full h-full absolute text-transparent opacity-0 pointer-events-auto m-0 left-0 top-0;
+        background: 0 0;
+    }
+    /* quiero hacer los mismo pero para un input file */
+    .custom-file-input::-webkit-file-upload-button {
+        @apply w-full h-full absolute text-transparent opacity-0 pointer-events-auto m-0 left-0 top-0;
+        background: 0 0;
+    }
 }
