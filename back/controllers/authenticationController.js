@@ -23,9 +23,18 @@ export const login = async (req, res) => {
     if (passwordMatch) {
       const tokenSession = tokenSign(userData);
 
+      const celebrityData = await prisma.celebrities.findUnique({
+        where: {
+          user_id: userData.id,
+        },
+      });
+
+      await prisma.$disconnect();
+
       return res.status(200).json({
         token: tokenSession,
         user: userData,
+        celebrity: celebrityData,
       });
     } else {
       return res
