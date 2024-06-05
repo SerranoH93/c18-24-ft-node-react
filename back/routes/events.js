@@ -6,6 +6,7 @@ import {
 } from "../middlewares/eventValidationMiddleware.js";
 import {
   createEvent,
+  getAllEvents,
   getAllEventsPaginated,
   retrieveEventByUUID,
   updateEventByUUID,
@@ -19,9 +20,10 @@ router.post(
   eventCreationValidationMiddleware,
   createEvent
 );
+router.get("/", getAllEvents);
 router.get("/page", getAllEventsPaginated);
 router.get("/:uuid", retrieveEventByUUID);
-router.patch(
+router.put(
   "/:uuid",
   parseMultipartForm,
   eventUpdateValidationMiddleware,
