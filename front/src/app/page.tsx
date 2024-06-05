@@ -1,13 +1,25 @@
 "use client"
-
+  
+import React, { useState } from 'react';
 import { userAuthStore } from "@/store/userAuthStore";
 import Profile from "@/components/profile";
 import Link from "next/link";
+import SearchBar from '@/components/SearchBar';
 
 export default function Home() {
   const user = userAuthStore((state) => state.user);
   const token = userAuthStore((state) => state.token); 
   const logout = userAuthStore((state) => state.logout);
+    
+    const [searchInput, setSearchInput] = useState('');
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchInput(event.target.value);
+    };
+
+    const handleSearchButtonClick = () => {
+        console.log('Searching for:', searchInput);
+    };
 
   const handleLogout = () => {
     logout();
@@ -23,6 +35,17 @@ export default function Home() {
       </div> 
 
       {/* Search Bar */}
+      <div className="p-5">
+           
+            <SearchBar
+                handleInput={handleInputChange}
+                handleButton={handleSearchButtonClick}
+                input={searchInput}
+            />
+        </div>
+      
+      
+   
 
       <div>
         <h3 className="text-2xl">Próximos eventos</h3>
@@ -42,3 +65,4 @@ export default function Home() {
     </main>
   );
 }
+
