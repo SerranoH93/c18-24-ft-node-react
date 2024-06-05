@@ -9,10 +9,13 @@ export const createEvent = async (req, res) => {
     if (req.files) {
       const uploadResult = await uploadImage(
         "events",
-        req.body.name,
+        req.body.uuid,
         req.files.data
       );
       req.body.event_poster_url = uploadResult.secure_url;
+    } else {
+      req.body.event_poster_url =
+        "https://res.cloudinary.com/daxkojrew/image/upload/v1717552459/events/generic_poster.jpg";
     }
 
     await prisma.events.create({ data: req.body });
@@ -104,5 +107,26 @@ export async function retrieveEventByUUID(req, res) {
     res
       .status(500)
       .json({ message: "Error al buscar el evento => " + error.message });
+  }
+}
+
+export async function updateEventByUUID(req, res) {
+  const { uuid } = req.params;
+
+  try {
+    if (req.files) {
+      const uploadResult = await uploadImage("events", uuid, req.files.data);
+      req.body.event_poster_url = uploadResult.secure_url;
+    }
+
+    await prisma.events.update({ where: { uuid: uuid }, data: req.body });
+
+    await prisma.$disconnect();
+
+    return res.status(200).json({ message: "Evento actualizado" });
+  } catch (error) {
+    await prisma.$disconnect();
+
+    return res.status(500).json({ message: error.message });
   }
 }
