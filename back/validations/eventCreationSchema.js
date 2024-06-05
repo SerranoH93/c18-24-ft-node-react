@@ -29,7 +29,13 @@ const eventCreationSchema = z
       .min(new Date(), {
         message: "No se pueden crear eventos en el pasado",
       }),
-    type: z.enum(["free", "paid"]),
+    price: z.coerce
+      .number({
+        required_error: "Precio obligatorio",
+      })
+      .nonnegative({
+        message: "El precio no puede ser un número negativo",
+      }),
     location: z.string({
       required_error: "Ubicación obligatoria",
     }),

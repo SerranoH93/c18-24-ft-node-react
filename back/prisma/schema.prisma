@@ -46,7 +46,7 @@ model events {
   about            String
   date             DateTime
   location         String
-  type             String
+  price            Int
   event_poster_url String
   celebrities      celebrities    @relation(fields: [celebrity_id], references: [id])
   celebrity_id     Int

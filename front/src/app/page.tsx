@@ -1,11 +1,12 @@
 "use client"
-
+  
+import React, { useEffect, useState } from 'react';
 import { userAuthStore } from "@/store/userAuthStore";
 import Profile from "@/components/profile";
 import Link from "next/link";
 import CardEvent from "@/components/cardevent";
 import { fetchEvents, Event } from "@/hooks/getEventHook";
-import { useEffect, useState } from "react";
+import SearchBar from '@/components/SearchBar';
 
 
 
@@ -15,6 +16,16 @@ export default function Home() {
   const user = userAuthStore((state) => state.user);
   const token = userAuthStore((state) => state.token); 
   const logout = userAuthStore((state) => state.logout);
+    
+    const [searchInput, setSearchInput] = useState('');
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchInput(event.target.value);
+    };
+
+    const handleSearchButtonClick = () => {
+        console.log('Searching for:', searchInput);
+    };
 
   //* Inicialización del estado para guardar los eventos
   const [events, setEvents] = useState<Event[]>([]);
@@ -45,10 +56,14 @@ export default function Home() {
         </div>        
         <div>{token===null ? <Link href="/login"><button className="py-2.5 px-7 bg-black text-gray-100 rounded-full" >Iniciar sesión</button></Link> : <Profile/>} </div>
       </div> 
-
-      <div className="flex flex-col py-2 h-14">
-        <img className="py-2.5 h-full" src="/logo.svg" alt="" />
-      </div>
+      
+      <div className="p-5">           
+            <SearchBar
+                handleInput={handleInputChange}
+                handleButton={handleSearchButtonClick}
+                input={searchInput}
+            />
+        </div>
 
       <section className="mt-6">
         <h3 className="text-2xl mb-2.5">Próximos eventos</h3>

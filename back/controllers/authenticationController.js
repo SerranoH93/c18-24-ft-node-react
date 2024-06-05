@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { tokenSign } from "../utils/tokenHelper.js";
 import uploadImage from "../utils/cloudinary.js";
 import passwordHasher from "../utils/hashHelper.js";
+import randomColorPalette from "../utils/boringAvatars.js";
 
 export const login = async (req, res) => {
   try {
@@ -65,18 +66,20 @@ export const register = async (req, res) => {
       );
       req.body.avatar_url = uploadResult.secure_url;
     } else {
-      req.body.avatar_url = `https://source.boringavatars.com/beam/160/${req.body.first_name}%20${req.body.last_name}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51`;
+      const colorPalette = randomColorPalette();
+
+      req.body.avatar_url = `https://source.boringavatars.com/beam/160/${req.body.first_name}%20${req.body.last_name}?colors=${colorPalette}`;
     }
 
     req.body.password = await passwordHasher(req.body.password);
 
-    await prisma.users.create({
+    const userCreated = await prisma.users.create({
       data: req.body,
     });
 
     await prisma.$disconnect();
 
-    return res.status(201).json({ message: "Usuario creado" });
+    return res.status(201).json({ user_id: userCreated.id });
   } catch (error) {
     await prisma.$disconnect();
 
