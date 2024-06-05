@@ -8,9 +8,6 @@ import CardEvent from "@/components/cardevent";
 import { fetchEvents, Event } from "@/hooks/getEventHook";
 import SearchBar from '@/components/SearchBar';
 
-
-
-
 export default function Home() {
   //* Se obtienen del estado global el token y el usuario
   const user = userAuthStore((state) => state.user);
@@ -83,9 +80,12 @@ export default function Home() {
         <div className="flex flex-row items-center justify-between mb-7">
           <h3 className="text-2xl">Destacados</h3>
           <button className="py-2 px-4 bg-black text-gray-100 rounded-full">Ver todos</button>
-        </div>        
-        {events.map(event => (
-          <CardEvent 
+        </div> 
+        
+        <div className='flex flex-col items-center justify-between'>
+          {events.map(event => (
+          <div className='mb-6'>
+            <CardEvent 
             key={event.id} 
             id={event.id} 
             title={event.name} 
@@ -93,16 +93,14 @@ export default function Home() {
             imgUser={event.imgUser} 
             imgEvent={event.event_poster_url} 
             user={event.user} size="medium" />
+          </div>          
         ))}
+        </div>
       </section>
 
-      <div className="flex flex-col items-center mt-6">
+      <div className="flex flex-col items-center mb-20">
         <button className="py-4 px-20 bg-black text-gray-100 rounded-full">Crear evento</button>
-      </div>  
-
-      <h1>{user?.first_name}</h1> 
-
-      <button onClick={handleLogout}>Cerrar sesión</button>  
+      </div>   
     </main>
   );
 }
