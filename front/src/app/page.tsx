@@ -26,6 +26,7 @@ export default function Home() {
 
   //* Inicialización del estado para guardar los eventos
   const [events, setEvents] = useState<Event[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
 
   useEffect(() => {
     async function loadEvents() {
@@ -38,6 +39,12 @@ export default function Home() {
     }
     loadEvents();
 }, [fetchEvents]);
+
+  //*Se usa para mostrar solamente los primeros 5 eventos más próximos
+  useEffect(() => {
+    const sortedEvents = [...events].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    setUpcomingEvents(sortedEvents.slice(0, 5));
+  }, [events]);
 
 
   //* Maneja el logout
@@ -64,16 +71,21 @@ export default function Home() {
 
       <section className="mt-6">
         <h3 className="text-2xl mb-2.5">Próximos eventos</h3>
-        {events.map(event => (
-          <CardEvent 
+        <div className='flex flex-row overflow-x-auto space-x-4'>
+        {upcomingEvents.map(event => (
+          <div className='flex-shrink-0 mr-4'>
+            <CardEvent 
             key={event.id} 
             id={event.id} 
             title={event.name} 
             date={event.date} 
             imgUser={event.imgUser} 
             imgEvent={event.event_poster_url} 
-            user={event.user} size="small" />
+            user={event.user} size="small" />            
+          </div>          
         ))}
+        </div>
+        
       </section>     
 
       <section className="mt-3.5">
@@ -84,7 +96,7 @@ export default function Home() {
         
         <div className='flex flex-col items-center justify-between'>
           {events.map(event => (
-          <div className='mb-6'>
+          <div className='flex-shrink-0 mb-6'>
             <CardEvent 
             key={event.id} 
             id={event.id} 
