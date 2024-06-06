@@ -37,6 +37,7 @@ export async function getAllEvents(req, res) {
       uuid: true,
       name: true,
       date: true,
+      event_poster_url: true,
       celebrities: {
         select: {
           celebrity_alias: true,
