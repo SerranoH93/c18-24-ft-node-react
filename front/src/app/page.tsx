@@ -11,6 +11,7 @@ import SearchBar from '@/components/SearchBar';
 export default function Home() {
   //* Se obtienen del estado global el token y el usuario
   const user = userAuthStore((state) => state.user);
+  const celebrity = userAuthStore((state) => state.celebrity);
   const token = userAuthStore((state) => state.token); 
   const logout = userAuthStore((state) => state.logout);
     
@@ -113,6 +114,8 @@ export default function Home() {
       <div className="flex flex-col items-center mb-20">
         <button className="py-4 px-20 bg-black text-gray-100 rounded-full">Crear evento</button>
       </div>   
+
+      <button onClick={handleLogout}>Cerrar sesión</button>  
     </main>
   );
 }
