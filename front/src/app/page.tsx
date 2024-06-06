@@ -112,7 +112,8 @@ export default function Home() {
       </section>
 
       <div className="flex flex-col items-center mb-20">
-        <button className="py-4 px-20 bg-black text-gray-100 rounded-full">Crear evento</button>
+        
+        <Link href="/event/new" className="py-4 px-20 bg-black text-gray-100 rounded-full">Crear evento</Link>
       </div>   
 
       <button onClick={handleLogout}>Cerrar sesión</button>  
