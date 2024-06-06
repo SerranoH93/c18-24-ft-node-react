@@ -7,15 +7,16 @@ type BaseInputProps = {
     label: string;
     register: UseFormRegister<any>;
     errors: FieldErrors;
+    startIcon?: JSX.Element;
     icon?: JSX.Element;
     gendersOptions?: JSX.Element[];
 };
 
-type TextInputProps = BaseInputProps & {
-    type: 'text' | 'checkbox' | 'email' | 'password' | 'date' | 'file'; // otros tipos de input que no sean 'select'
+type TextInputProps = BaseInputProps & React.InputHTMLAttributes<HTMLInputElement> & {
+    type: 'text' | 'number' | 'checkbox' | 'email' | 'password' | 'datetime-local' | 'date' | 'file'; // otros tipos de input que no sean 'select'
 };
 
-type SelectInputProps = BaseInputProps & {
+type SelectInputProps = BaseInputProps & React.InputHTMLAttributes<HTMLInputElement> & {
     type: 'select';
     label: string;
     gendersOptions: JSX.Element[];
@@ -24,7 +25,7 @@ type SelectInputProps = BaseInputProps & {
 type InputProps = TextInputProps | SelectInputProps;
 
 export default function Input(props: InputProps) {
-    const { name, placeholder, type, label, register, errors, gendersOptions, icon } = props;
+    const { name, placeholder, type, label, register, errors, gendersOptions, icon, startIcon, ...otherProps } = props;
     return (
         <div
             className={clsx(
@@ -41,7 +42,8 @@ export default function Input(props: InputProps) {
             <input
                 className={clsx(
                     type === "select" && "hidden",
-                    type === "checkbox" ? "cursor-pointer hidden after:opacity-100" : "rounded-full h-[61px] pt-1 px-6 w-full bg-zinc-300 placeholder-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent text-[#383838]",
+                    type === "checkbox" ? "peer cursor-pointer appearance-none after:opacity-100" : "rounded-full h-[61px] pt-1 px-6 w-full bg-zinc-300 placeholder-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent text-[#383838]",
+                    type === "datetime-local" && "form-date__input custom-date-input",
                     type === "date" && "form-date__input custom-date-input",
                     type === "file" && "form-file__input custom-file-input pt-[22px]",
                     errors[name] && "text-red-700 focus:ring-red-500 bg-red-200"
@@ -50,14 +52,18 @@ export default function Input(props: InputProps) {
                 id={name}
                 placeholder={placeholder}
                 {...register(name)}
+                {...otherProps}
             />
             {
                 icon && <div className='absolute top-[35%] left-[87%]'>
                     {icon}
                 </div>
             }
+            {startIcon && <div className='absolute top-[20%] left-[6%]'>
+                {startIcon}
+            </div>}
             {
-                type === "date" &&
+                type === "datetime-local" &&
                 <svg className='absolute top-[35%] left-[87%]' xmlns="http://www.w3.org/2000/svg" width="18" height="22" viewBox="0 0 18 22" fill="none">
                     <path d="M15.4167 4.24056V4.03059C15.4167 3.12263 15.1269 2.25185 14.6112 1.60983C14.0955 0.967803 13.396 0.607117 12.6667 0.607117C11.9373 0.607117 11.2378 0.967803 10.7221 1.60983C10.2064 2.25185 9.91667 3.12263 9.91667 4.03059H8.08333C8.08333 3.12263 7.7936 2.25185 7.27788 1.60983C6.76215 0.967803 6.06268 0.607117 5.33333 0.607117C4.60399 0.607117 3.90451 0.967803 3.38879 1.60983C2.87306 2.25185 2.58333 3.12263 2.58333 4.03059V4.24056C2.04878 4.4753 1.58564 4.91014 1.25741 5.48546C0.929189 6.06078 0.75195 6.7484 0.75 7.45406V17.7245C0.75 19.6119 1.98383 21.1479 3.5 21.1479H14.5C16.0162 21.1479 17.25 19.6119 17.25 17.7245V7.45406C17.2481 6.7484 17.0708 6.06078 16.7426 5.48546C16.4144 4.91014 15.9512 4.4753 15.4167 4.24056ZM11.75 4.03059C11.75 3.72793 11.8466 3.43768 12.0185 3.22367C12.1904 3.00966 12.4236 2.88943 12.6667 2.88943C12.9098 2.88943 13.1429 3.00966 13.3148 3.22367C13.4868 3.43768 13.5833 3.72793 13.5833 4.03059V6.3129C13.5833 6.61555 13.4868 6.90581 13.3148 7.11982C13.1429 7.33383 12.9098 7.45406 12.6667 7.45406C12.4236 7.45406 12.1904 7.33383 12.0185 7.11982C11.8466 6.90581 11.75 6.61555 11.75 6.3129V4.03059ZM4.41667 4.03059C4.41667 3.72793 4.51324 3.43768 4.68515 3.22367C4.85706 3.00966 5.09022 2.88943 5.33333 2.88943C5.57645 2.88943 5.80961 3.00966 5.98151 3.22367C6.15342 3.43768 6.25 3.72793 6.25 4.03059V6.3129C6.25 6.61555 6.15342 6.90581 5.98151 7.11982C5.80961 7.33383 5.57645 7.45406 5.33333 7.45406C5.09022 7.45406 4.85706 7.33383 4.68515 7.11982C4.51324 6.90581 4.41667 6.61555 4.41667 6.3129V4.03059ZM15.4167 17.7245C15.4167 18.3532 15.006 18.8656 14.5 18.8656H3.5C2.994 18.8656 2.58333 18.3532 2.58333 17.7245V10.8775H15.4167V17.7245Z" fill="#383838" />
                 </svg>

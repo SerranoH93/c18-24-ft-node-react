@@ -31,6 +31,7 @@ export function useFetch() {
                 ...options
             })
             console.log(data);
+            //hacer logica del redirect
 
             setToken(data.token);
             setUser(data.user);
