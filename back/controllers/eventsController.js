@@ -32,14 +32,16 @@ export const createEvent = async (req, res) => {
 
 export async function getAllEvents(req, res) {
   const allEvents = await prisma.events.findMany({
-    include: {
+    select: {
+      id: true,
+      uuid: true,
+      name: true,
+      date: true,
       celebrities: {
         select: {
           celebrity_alias: true,
           users: {
             select: {
-              first_name: true,
-              last_name: true,
               avatar_url: true,
             },
           },
@@ -97,6 +99,26 @@ export async function retrieveEventByUUID(req, res) {
   try {
     const eventData = await prisma.events.findUnique({
       where: { uuid: uuid },
+      select: {
+        uuid: true,
+        name: true,
+        about: true,
+        date: true,
+        location: true,
+        price: true,
+        event_poster_url: true,
+        celebrity_id: true,
+        celebrities: {
+          select: {
+            celebrity_alias: true,
+            users: {
+              select: {
+                avatar_url: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     await prisma.$disconnect();
