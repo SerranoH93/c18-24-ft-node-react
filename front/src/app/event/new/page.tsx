@@ -21,13 +21,13 @@ type Inputs = {
     location: string;
     price: string;
     event_poster_url: string | null;
-    celebrity_id: string;
+    celebrity_id: string | null;
 }
 
 
 export default function CreateEvent() {
     const user = userAuthStore((state) => state.user);
-    console.log(user);
+    const celebrity = userAuthStore((state) => state.celebrity);
 
     const [file, setFile] = useState<File | null>(null);
     const [datosCargados, setDatosCargados] = useState(false);
@@ -63,10 +63,9 @@ export default function CreateEvent() {
             location: data.data.location,
             price: data.data.price,
             event_poster_url: data.data.event_poster_url, // data.data.event_poster_url || null,
-            celebrity_id: "1",
+            celebrity_id: data.data.celebrity_id,
             avatar_url: data.data.celebrities.users.avatar_url
         });
-
 
         setDatosCargados(true);
     };
@@ -74,9 +73,9 @@ export default function CreateEvent() {
     useEffect(() => {
         if (params.id) {
             getTask();
-
         }
-    }, [params.id]);
+    }, []);
+
     // Hacer el split de la location
     let location = getItem.location.split('/');
     const Lat = parseFloat(location[1]);
@@ -86,6 +85,7 @@ export default function CreateEvent() {
     if (getItem.date) {
         date = getItem.date.substring(0, 16);
     }
+
     //cargar los datos en los inputs
     useEffect(() => {
         if (params.id) {
@@ -99,11 +99,9 @@ export default function CreateEvent() {
                 setValue('celebrity_id', getItem.celebrity_id);
             }
         }
-    }, [datosCargados, setValue, getItem]);
+    }, [getItem]);
 
-
-
-    const onSubmit = handleSubmit(async ({ name, about, date, location, price, }) => {
+    const onSubmit = handleSubmit(async ({ name, about, date, location, price }) => {
 
         const formData = new FormData();
         formData.append("name", name);
@@ -111,8 +109,11 @@ export default function CreateEvent() {
         formData.append("date", date);
         formData.append("location", `${location}/${String(selectedAddress?.lat())}/${String(selectedAddress?.lng())}`);
         formData.append("price", price);
-        //se obtiene desde el estado
-        formData.append("celebrity_id", "1");
+        //se obtiene desde el estado o desde getItem
+        formData.append(
+          "celebrity_id",
+          params.id ? String(getItem.celebrity_id) : String(celebrity?.id)
+        );
         if (file) {
             formData.append('image', file);
         }
@@ -120,7 +121,7 @@ export default function CreateEvent() {
         if (params.id) {
             await getUseFetch({
                 endpoint: `events/${params.id}`,
-                method: 'patch',
+                method: 'put',
                 redirectRoute: `/event/detail/${params.id}`,
                 formData: formData,
                 options: {
