@@ -13,6 +13,7 @@ interface AuthFetchProps {
 export function useFetch() {
     const router = useRouter();
     const setUser = userAuthStore((state) => state.setUser);
+    const setCelebrity = userAuthStore((state) => state.setCelebrity);
     const setToken = userAuthStore((state) => state.setToken);
 
     const authRouter = async ({
@@ -34,6 +35,7 @@ export function useFetch() {
 
             setToken(data.token);
             setUser(data.user);
+            setCelebrity(data.user);
 
             if (redirectRoute) {
                 router.push(redirectRoute)

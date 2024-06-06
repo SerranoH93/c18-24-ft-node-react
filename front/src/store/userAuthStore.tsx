@@ -11,10 +11,22 @@ interface User {
     avatar_url: string;
 }
 
+interface Celebrity {
+    id: number;
+    celebrity_alias: string;
+    id_number: string;
+    birthdate: string;
+    active_region: string;
+    category: string;
+    id_image_url: string;
+}
+
 interface AuthStore {
     user: User | null;
+    celebrity: Celebrity | null;
     token: string | null;
     setUser: (user: User) => void;
+    setCelebrity: (celebrity: Celebrity) => void;
     setToken: (token: string) => void;
     logout: () => void;
 }
@@ -24,7 +36,9 @@ export const userAuthStore = create<AuthStore>()(
         (set) => ({
             user: null,
             token: null,
+            celebrity: null,
             setUser: (user) => set({ user }),
+            setCelebrity: (celebrity) => set({ celebrity }),
             setToken: (token) => set({ token }),
             logout: () => set({ user: null, token: null }),
         }),
