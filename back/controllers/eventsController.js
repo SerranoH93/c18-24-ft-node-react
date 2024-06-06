@@ -31,7 +31,22 @@ export const createEvent = async (req, res) => {
 };
 
 export async function getAllEvents(req, res) {
-  const allEvents = await prisma.events.findMany();
+  const allEvents = await prisma.events.findMany({
+    include: {
+      celebrities: {
+        select: {
+          celebrity_alias: true,
+          users: {
+            select: {
+              first_name: true,
+              last_name: true,
+              avatar_url: true,
+            },
+          },
+        },
+      },
+    },
+  });
 
   await prisma.$disconnect();
 
