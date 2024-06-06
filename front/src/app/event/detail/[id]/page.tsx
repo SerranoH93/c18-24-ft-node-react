@@ -1,16 +1,20 @@
 "use client";
 
-import { useFetch } from "@/hooks/postHook";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Autocomplete, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import Link from "next/link";
+import { userAuthStore } from "@/store/userAuthStore";
+import { useFetchHook } from "@/hooks/useFetchHook";
 
 interface Params {
     id: string;
 }
 
 export default function App({ params }: { params: Params }) {
+    const user = userAuthStore((state) => state.user);
+    console.log(user);
+
     const { id } = params;
 
     const [datosCargados, setDatosCargados] = useState(false);
@@ -26,7 +30,7 @@ export default function App({ params }: { params: Params }) {
         avatar_url: "",
         uuid: ""
     });
-    const getUseFetch = useFetch()
+    const getUseFetch = useFetchHook()
     //Carga de datos
     const getTask = async () => {
         const data = await getUseFetch({
@@ -104,7 +108,7 @@ export default function App({ params }: { params: Params }) {
     return (
         <section className="flex flex-col pb-10">
             <figure className="relative flex justify-center items-center w-full h-72 shadow-md">
-                <div className="absolute flex justify-between px-4 w-full top-2">
+                <div className="absolute flex justify-between px-4 w-full top-2 z-30">
                     <Link className="rounded-lg px-4 py-2" href="/">
                         <svg className="stroke-zinc-600" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
                             <path d="M14.0938 4.8125L7.90625 11L14.0938 17.1875" strokeOpacity="0.7" strokeWidth="2.0625" strokeLinecap="round" strokeLinejoin="round" />
@@ -122,7 +126,7 @@ export default function App({ params }: { params: Params }) {
                 <figure className="w-28">
                     <Image
                         className="absolute w-[75xp] h-[75px] top-64 left-8 rounded-full border-[4px] border-white z-20"
-                        src={getItem.avatar_url}
+                        src={user ? user.avatar_url : '/Ellipse4.png'}
                         alt="User image"
                         height={75}
                         width={75}
@@ -133,6 +137,7 @@ export default function App({ params }: { params: Params }) {
                     <h1 className="text-4xl font-new font-extrabold">{getItem.name}</h1>
                 </div>
             </div>
+            {user && <Link href={`/event/edit/${getItem.uuid}`} className="mx-auto rounded-[30px] bg-[#030712] h-12 w-1/2 py-2 text-white font-new text-lg text-center font-medium">Editar</Link>}
             <div className="px-8 pt-4">
                 <h2 className="text-xl font-new pb-[11px] pl-[9px]">Acerca del evento</h2>
                 <div className="rounded-3xl bg-[#D9D9D9] p-[18px] text-pretty text-sm font-new text-[#383838]">

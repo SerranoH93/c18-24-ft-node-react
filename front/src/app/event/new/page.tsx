@@ -10,10 +10,11 @@ import { useForm } from "react-hook-form";
 import Input from '@/components/input';
 import Image from 'next/image';
 import Link from "next/link";
+import { userAuthStore } from '@/store/userAuthStore';
+import { useFetchHook } from '@/hooks/useFetchHook';
 
 
 type Inputs = {
-    id: string;
     name: string;
     about: string;
     date: string;
@@ -23,11 +24,14 @@ type Inputs = {
     celebrity_id: string;
 }
 
+
 export default function CreateEvent() {
+    const user = userAuthStore((state) => state.user);
+    console.log(user);
+
     const [file, setFile] = useState<File | null>(null);
     const [datosCargados, setDatosCargados] = useState(false);
     const [getItem, setGetItem] = useState({
-        id: "",
         name: "",
         about: "",
         date: "",
@@ -39,7 +43,7 @@ export default function CreateEvent() {
     });
     const [selectedAddress, setSelectedAddress] = useState<google.maps.LatLng | null>(null);
     const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
-    const getUseFetch = useFetch();
+    const getUseFetch = useFetchHook();
     const params = useParams();
     const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<Inputs>({
         resolver: zodResolver(eventCreationSchema)
@@ -53,7 +57,6 @@ export default function CreateEvent() {
         });
 
         setGetItem({
-            id: data.data.id,
             name: data.data.name,
             about: data.data.about,
             date: data.data.date,
@@ -71,6 +74,7 @@ export default function CreateEvent() {
     useEffect(() => {
         if (params.id) {
             getTask();
+
         }
     }, [params.id]);
     // Hacer el split de la location
@@ -96,6 +100,8 @@ export default function CreateEvent() {
             }
         }
     }, [datosCargados, setValue, getItem]);
+
+
 
     const onSubmit = handleSubmit(async ({ name, about, date, location, price, }) => {
 
@@ -162,8 +168,8 @@ export default function CreateEvent() {
         <section className="flex flex-col pb-10">
             <form onSubmit={onSubmit}>
                 <figure className="relative flex justify-center items-center w-full h-72 shadow-md">
-                    <div className="absolute flex justify-between px-4 w-full top-2">
-                        <Link className="rounded-lg px-4 py-2" href="/eventos">
+                    <div className="absolute flex justify-between px-4 w-full top-2 z-30">
+                        <Link className="rounded-lg px-4 py-2" href="/">
                             <svg className="stroke-zinc-600" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
                                 <path d="M14.0938 4.8125L7.90625 11L14.0938 17.1875" strokeOpacity="0.7" strokeWidth="2.0625" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
@@ -185,7 +191,7 @@ export default function CreateEvent() {
                     <figure className="w-28">
                         <Image
                             className="absolute w-[75xp] h-[75px] top-64 left-8 rounded-full border-[4px] border-white z-20"
-                            src={params.id ? getItem.avatar_url : '/Ellipse4.png'}
+                            src={user ? user.avatar_url : '/Ellipse4.png'}
                             alt="User image"
                             height={75}
                             width={75}

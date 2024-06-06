@@ -6,7 +6,7 @@ import Link from "next/link";
 import clsx from "clsx";
 
 interface CardEventProps {
-    
+
     uuid: string;
     title: string;
     date: string;
@@ -62,7 +62,7 @@ export default function CardEvent(props: CardEventProps) {
                     height={670}
                     width={670} />
                 <div className="w-full pt-[3px] pb-[6px] px-3 text-left z-20 bg-[#D9D9D9]">
-                    <p className="text-xs font-new font-bold">{date.substring(0, 16)}</p>
+                    <p className="text-xs font-new font-bold">{date.substring(0, 10)}</p>
                     <p className="text-2xl font-new font-extrabold">{title}</p>
                 </div>
             </main>
