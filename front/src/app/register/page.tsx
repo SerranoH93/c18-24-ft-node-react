@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useFetch } from "@/hooks/postHook";
 
 type Inputs = {
+    // user_id: string;
     email: string;
     name: string;
     lastname: string;
@@ -53,7 +54,8 @@ export default function Register() {
 
         await Fetch({
             endpoint: 'authentication/register',
-            redirectRoute: '/login',
+            //hacer logica del checkbox
+            redirectRoute: '/refgistercelebrity/',
             formData: formData,
             method: 'post'
         })
