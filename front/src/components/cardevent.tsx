@@ -6,7 +6,8 @@ import Link from "next/link";
 import clsx from "clsx";
 
 interface CardEventProps {
-    id: string;
+    
+    uuid: string;
     title: string;
     date: string;
     imgUser: string;
@@ -17,7 +18,7 @@ interface CardEventProps {
 
 export default function CardEvent(props: CardEventProps) {
     const [fav, setFav] = useState(false);
-    const { id, title, date, imgUser, imgEvent, user, size } = props;
+    const { uuid, title, date, imgUser, imgEvent, user, size } = props;
     return (
         <article className={clsx(
             !size && "w-[220px]",
@@ -66,7 +67,7 @@ export default function CardEvent(props: CardEventProps) {
                 </div>
             </main>
             <footer className="flex justify-between items-center h-14 px-3 bg-[#030712]">
-                <Link href={`/evento/${id}`} className="h-[30px] px-[18px] py-[6px] bg-[#F2F2F2] rounded-2xl text-sm">Ver más</Link>
+                <Link href={`/event/detail/${uuid}`} className="h-[30px] px-[18px] py-[6px] bg-[#F2F2F2] rounded-2xl text-sm">Ver más</Link>
                 <button onClick={() => setFav(!fav)}>
                     <svg
                         className={clsx(

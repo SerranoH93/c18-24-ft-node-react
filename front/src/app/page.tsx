@@ -32,7 +32,7 @@ export default function Home() {
   useEffect(() => {
     async function loadEvents() {
         try {
-            const eventsData = await fetchEvents('event'); //! Corregir para el endpoint de back
+            const eventsData = await fetchEvents('events'); //! Corregir para el endpoint de back
             setEvents(eventsData);
         } catch (error) {
           throw error;
@@ -74,15 +74,15 @@ export default function Home() {
         <h3 className="text-2xl mb-2.5">Próximos eventos</h3>
         <div className='flex flex-row overflow-x-auto space-x-4'>
         {upcomingEvents.map(event => (
-          <div className='flex-shrink-0 mr-4'>
+          <div key={event.id}  className='flex-shrink-0 mr-4'>
             <CardEvent 
-            key={event.id} 
-            id={event.id} 
+             
+            uuid={event.uuid} 
             title={event.name} 
             date={event.date} 
-            imgUser={event.imgUser} 
+            imgUser={event.celebrities.users.avatar_url} 
             imgEvent={event.event_poster_url} 
-            user={event.user} size="small" />            
+            user={event.celebrities.celebrity_alias} size="small" />            
           </div>          
         ))}
         </div>
@@ -97,15 +97,15 @@ export default function Home() {
         
         <div className='flex flex-col items-center justify-between'>
           {events.map(event => (
-          <div className='flex-shrink-0 mb-6'>
+          <div key={event.id}  className='flex-shrink-0 mb-6'>
             <CardEvent 
-            key={event.id} 
-            id={event.id} 
+            
+            uuid={event.uuid} 
             title={event.name} 
             date={event.date} 
-            imgUser={event.imgUser} 
+            imgUser={event.celebrities.users.avatar_url} 
             imgEvent={event.event_poster_url} 
-            user={event.user} size="medium" />
+            user={event.celebrities.celebrity_alias} size="medium" />
           </div>          
         ))}
         </div>
