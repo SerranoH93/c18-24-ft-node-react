@@ -43,11 +43,13 @@ model events {
   id               Int            @id @default(autoincrement())
   uuid             String         @unique
   name             String
-  about            String
   date             DateTime
-  location         String
   price            Int
+  seats            Int
+  about            String
+  location         String
   event_poster_url String
+  closed           Boolean        @default(false)
   celebrities      celebrities    @relation(fields: [celebrity_id], references: [id])
   celebrity_id     Int
   users            users_events[]
@@ -57,6 +59,6 @@ model users_events {
   id               Int            @id @default(autoincrement())
   users            users          @relation(fields: [user_id], references: [id])
   user_id          Int
-  events           events         @relation(fields: [event_id], references: [id])
-  event_id         Int
+  events           events         @relation(fields: [event_uuid], references: [uuid])
+  event_uuid       String
 }

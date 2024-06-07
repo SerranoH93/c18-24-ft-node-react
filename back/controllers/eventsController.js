@@ -30,7 +30,7 @@ export const createEvent = async (req, res) => {
   }
 };
 
-export async function getAllEvents(req, res) {
+export const getAllEvents = async (req, res) => {
   const allEvents = await prisma.events.findMany({
     select: {
       id: true,
@@ -56,9 +56,9 @@ export async function getAllEvents(req, res) {
   res.status(200).json({
     data: allEvents,
   });
-}
+};
 
-export async function getAllEventsPaginated(req, res) {
+export const getAllEventsPaginated = async (req, res) => {
   const take = parseInt(req.query.take) || 10;
   const page = parseInt(req.query.page) || 1;
 
@@ -92,28 +92,39 @@ export async function getAllEventsPaginated(req, res) {
       message: "Error al obtener los eventos => " + error.message,
     });
   }
-}
+};
 
-export async function retrieveEventByUUID(req, res) {
-  const { uuid } = req.params;
-
+export const retrieveEventByUUID = async (req, res) => {
   try {
     const eventData = await prisma.events.findUnique({
-      where: { uuid: uuid },
+      where: { uuid: req.query.event_uuid },
       select: {
         uuid: true,
         name: true,
-        about: true,
         date: true,
-        location: true,
         price: true,
+        seats: true,
+        about: true,
+        location: true,
         event_poster_url: true,
+        closed: true,
         celebrity_id: true,
         celebrities: {
           select: {
             celebrity_alias: true,
             users: {
               select: {
+                avatar_url: true,
+              },
+            },
+          },
+        },
+        users: {
+          select: {
+            users: {
+              select: {
+                first_name: true,
+                last_name: true,
                 avatar_url: true,
               },
             },
@@ -128,8 +139,19 @@ export async function retrieveEventByUUID(req, res) {
       return res.status(404).json({ message: "Evento no existe" });
     }
 
+    const user_eventData = await prisma.users_events.findFirst({
+      where: {
+        user_id: Number(req.query.user_id),
+        event_uuid: req.query.event_uuid,
+      },
+    });
+
+    await prisma.$disconnect();
+
+    const isUserRegistered = user_eventData ? true : false;
+
     res.status(200).json({
-      data: eventData,
+      data: { ...eventData, isUserRegistered: isUserRegistered },
     });
   } catch (error) {
     await prisma.$disconnect();
@@ -138,18 +160,19 @@ export async function retrieveEventByUUID(req, res) {
       .status(500)
       .json({ message: "Error al buscar el evento => " + error.message });
   }
-}
+};
 
-export async function updateEventByUUID(req, res) {
-  const { uuid } = req.params;
-
+export const updateEventByUUID = async (req, res) => {
   try {
     if (req.files) {
       const uploadResult = await uploadImage("events", uuid, req.files.data);
       req.body.event_poster_url = uploadResult.secure_url;
     }
 
-    await prisma.events.update({ where: { uuid: uuid }, data: req.body });
+    await prisma.events.update({
+      where: { uuid: req.params.event_uuid },
+      data: req.body,
+    });
 
     await prisma.$disconnect();
 
@@ -159,4 +182,21 @@ export async function updateEventByUUID(req, res) {
 
     return res.status(500).json({ message: error.message });
   }
-}
+};
+
+export const closeEvent = async (req, res) => {
+  try {
+    await prisma.events.update({
+      where: { uuid: req.params.event_uuid },
+      data: { closed: true },
+    });
+
+    await prisma.$disconnect();
+
+    return res.status(200).json({ message: "Evento cerrado" });
+  } catch (error) {
+    await prisma.$disconnect();
+
+    return res.status(500).json({ message: error.message });
+  }
+};

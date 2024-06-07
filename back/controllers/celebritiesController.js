@@ -78,15 +78,15 @@ export const createCelebrity = async (req, res) => {
   }
 };
 
-export async function getAllCelebrities(req, res) {
+export const getAllCelebrities = async (req, res) => {
   const allCelebrities = await prisma.celebrities.findMany();
 
   await prisma.$disconnect();
 
   res.status(200).json({ data: allCelebrities });
-}
+};
 
-export async function retrieveCelebrityById(req, res) {
+export const retrieveCelebrityById = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -110,4 +110,4 @@ export async function retrieveCelebrityById(req, res) {
       .status(500)
       .json({ message: "Error al buscar la celebridad => " + error.message });
   }
-}
+};

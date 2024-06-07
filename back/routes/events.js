@@ -10,6 +10,7 @@ import {
   getAllEventsPaginated,
   retrieveEventByUUID,
   updateEventByUUID,
+  closeEvent,
 } from "../controllers/eventsController.js";
 
 const router = express.Router();
@@ -22,12 +23,13 @@ router.post(
 );
 router.get("/", getAllEvents);
 router.get("/page", getAllEventsPaginated);
-router.get("/:uuid", retrieveEventByUUID);
+router.get("/retrieve", retrieveEventByUUID);
 router.put(
-  "/:uuid",
+  "/:event_uuid",
   parseMultipartForm,
   eventUpdateValidationMiddleware,
   updateEventByUUID
 );
+router.get("/close/:event_uuid", closeEvent);
 
 export default router;

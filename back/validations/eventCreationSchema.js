@@ -12,16 +12,6 @@ const eventCreationSchema = z
       .max(50, {
         message: "El nombre no debe tener más de 50 caracteres",
       }),
-    about: z
-      .string({
-        required_error: "Descripción obligatoria",
-      })
-      .min(10, {
-        message: "La descripción debe tener al menos 10 caracteres",
-      })
-      .max(500, {
-        message: "La descripción no debe tener más de 500 caracteres",
-      }),
     date: z.coerce
       .date({
         required_error: "Fecha y hora son obligatorios",
@@ -35,6 +25,23 @@ const eventCreationSchema = z
       })
       .nonnegative({
         message: "El precio no puede ser un número negativo",
+      }),
+    seats: z.coerce
+      .number({
+        required_error: "Número de asientos obligatorio",
+      })
+      .positive({
+        message: "El número de asientos debe ser mayor a cero",
+      }),
+    about: z
+      .string({
+        required_error: "Descripción obligatoria",
+      })
+      .min(10, {
+        message: "La descripción debe tener al menos 10 caracteres",
+      })
+      .max(500, {
+        message: "La descripción no debe tener más de 500 caracteres",
       }),
     location: z.string({
       required_error: "Ubicación obligatoria",
