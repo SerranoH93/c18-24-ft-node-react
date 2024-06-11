@@ -2,7 +2,8 @@
 
 import { registerArtistSchema, mappedCategory } from '@/validations/userSchema';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFetch } from "@/hooks/postHook";
+import { userAuthStore } from '@/store/userAuthStore';
+import { useFetchHook } from '@/hooks/useFetchHook';
 import { useForm } from "react-hook-form";
 import Input from "@/components/input";
 
@@ -16,13 +17,10 @@ type Inputs = {
     category: string;
     image: object;
 }
-interface Params {
-    id: string;
-}
 
-export default function RegisterEvent({ params }: { params: Params }) {
+export default function RegisterEvent() {
+    const userID = userAuthStore((state) => state.user);
 
-    const { id } = params;
 
     const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>({
         resolver: zodResolver(registerArtistSchema)
@@ -32,11 +30,11 @@ export default function RegisterEvent({ params }: { params: Params }) {
         return <option value={key} key={key}>{value}</option>
     })
 
-    const Fetch = useFetch()
+    const Fetch = useFetchHook()
 
     const onSubmit = handleSubmit(async ({ user, name, lastname, dni, date, location, category }) => {
         const formData = new FormData();
-        formData.append('user_id', "1");
+        formData.append('user_id', String(userID?.id));
         formData.append('celebrity_alias', user);
         formData.append('first_name', name);
         formData.append('last_name', lastname);
@@ -62,6 +60,7 @@ export default function RegisterEvent({ params }: { params: Params }) {
             formData: formData,
             method: 'post'
         })
+        //Obtener el id del usuario
     })
 
 

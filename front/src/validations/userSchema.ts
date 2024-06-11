@@ -173,4 +173,5 @@ export const eventCreationSchema = z.object({
         .optional(),
     price: z.string().optional(),
     celebrity_id: z.string().optional(),
+    seats: z.string().optional(),
 });

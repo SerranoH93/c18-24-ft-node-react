@@ -31,19 +31,31 @@ interface AuthStore {
     logout: () => void;
 }
 
+
 export const userAuthStore = create<AuthStore>()(
     persist(
         (set) => ({
             user: null,
             token: null,
             celebrity: null,
-            setUser: (user) => set({ user }),
+            setUser: (user) => {
+                set({ user }),
+                    document.cookie = `user-role=${JSON.stringify(user.role)}; path=/; max-age=86400`; // Guarda el usuario en las cookies
+            },
             setCelebrity: (celebrity) => set({ celebrity }),
-            setToken: (token) => set({ token }),
-            logout: () => set({ user: null, token: null }),
+            setToken: (token) => {
+                set({ token });
+                document.cookie = `token=${token}; path=/; max-age=86400`; // Guarda el token en las cookies
+            },
+            logout: () => {
+                set({ user: null, token: null });
+                document.cookie = `token=; path=/; max-age=-1`; // Elimina el token de las cookies
+                document.cookie = `user-role=; path=/; max-age=-1`; // Elimina el usuario de las cookies
+
+            },
         }),
         {
             name: 'auth-storage', // nombre en localStorage
         }
-    )     
+    )
 );
