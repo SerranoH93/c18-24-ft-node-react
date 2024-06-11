@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@nextui-org/avatar": "^2.0.29",
     "axios": "^1.7.2"
   }
 }

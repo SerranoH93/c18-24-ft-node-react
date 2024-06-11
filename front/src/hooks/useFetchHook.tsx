@@ -27,7 +27,6 @@ export function useFetchHook() {
                 ...options
             })
             console.log(data);
-            //hacer logica del redirect
 
             if (redirectRoute) {
                 router.push(redirectRoute)

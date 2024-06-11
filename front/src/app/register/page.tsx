@@ -1,14 +1,14 @@
 "use client"
 
-import Input from "@/components/input";
-import { useForm } from "react-hook-form";
 import { registerSchema, mappedGenders } from '@/validations/userSchema';
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useFetchHook } from "@/hooks/useFetchHook";
+import { useForm } from "react-hook-form";
+import Input from "@/components/input";
 import { useState } from "react";
-import { useFetch } from "@/hooks/postHook";
+
 
 type Inputs = {
-    // user_id: string;
     email: string;
     name: string;
     lastname: string;
@@ -16,6 +16,7 @@ type Inputs = {
     confirmPassword: string;
     gender: string;
     checkbox: boolean;
+    artistCheck: boolean;
 }
 
 
@@ -26,7 +27,7 @@ export default function Register() {
         setPasswordVisible(!passwordVisible)
     }
 
-    const { register, handleSubmit, formState: { errors } } = useForm<Inputs>({
+    const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>({
         resolver: zodResolver(registerSchema)
     });
 
@@ -34,9 +35,9 @@ export default function Register() {
         return <option value={key} key={key}>{value}</option>
     })
 
-    console.log(errors);
 
-    const Fetch = useFetch()
+
+    const Fetch = useFetchHook()
 
     const onSubmit = handleSubmit(async ({ email, name, lastname, password, gender }) => {
         const formData = new FormData();
@@ -54,8 +55,7 @@ export default function Register() {
 
         await Fetch({
             endpoint: 'authentication/register',
-            //hacer logica del checkbox
-            redirectRoute: '/refgistercelebrity/',
+            redirectRoute: '/login',
             formData: formData,
             method: 'post'
         })

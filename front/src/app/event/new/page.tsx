@@ -1,23 +1,23 @@
 'use client';
 
-import { GoogleMap, LoadScript, Marker, Autocomplete } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, Marker, Autocomplete, LoadScriptNext } from '@react-google-maps/api';
 import React, { useState, useEffect, ChangeEvent } from "react";
 import { eventCreationSchema } from "@/validations/userSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFetch } from "@/hooks/postHook";
+import { userAuthStore } from '@/store/userAuthStore';
+import { useFetchHook } from '@/hooks/useFetchHook';
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import Input from '@/components/input';
 import Image from 'next/image';
 import Link from "next/link";
-import { userAuthStore } from '@/store/userAuthStore';
-import { useFetchHook } from '@/hooks/useFetchHook';
 
 
 type Inputs = {
     name: string;
     about: string;
     date: string;
+    seats: string;
     location: string;
     price: string;
     event_poster_url: string | null;
@@ -52,7 +52,7 @@ export default function CreateEvent() {
     // cargar datos si el params está
     const getTask = async () => {
         const data = await getUseFetch({
-            endpoint: `events/${params.id}`,
+            endpoint: `events/retrieve?event_uuid=${params.id[1]}&user_id=${params.id[0]}`,
             method: 'get'
         });
 
@@ -101,18 +101,19 @@ export default function CreateEvent() {
         }
     }, [getItem]);
 
-    const onSubmit = handleSubmit(async ({ name, about, date, location, price }) => {
+    const onSubmit = handleSubmit(async ({ name, about, date, location, price, seats }) => {
 
         const formData = new FormData();
         formData.append("name", name);
         formData.append("about", about);
         formData.append("date", date);
+        formData.append("seats", seats);
         formData.append("location", `${location}/${String(selectedAddress?.lat())}/${String(selectedAddress?.lng())}`);
         formData.append("price", price);
         //se obtiene desde el estado o desde getItem
         formData.append(
-          "celebrity_id",
-          params.id ? String(getItem.celebrity_id) : String(celebrity?.id)
+            "celebrity_id",
+            params.id ? String(getItem.celebrity_id) : String(celebrity?.id)
         );
         if (file) {
             formData.append('image', file);
@@ -163,6 +164,7 @@ export default function CreateEvent() {
         }
     };
 
+    console.log(watch());
 
 
     return (
@@ -171,12 +173,12 @@ export default function CreateEvent() {
                 <figure className="relative flex justify-center items-center w-full h-72 shadow-md">
                     <div className="absolute flex justify-between px-4 w-full top-2 z-30">
                         <Link className="rounded-lg px-4 py-2" href="/">
-                            <svg className="stroke-zinc-600" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                            <svg className="stroke-zinc-500" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
                                 <path d="M14.0938 4.8125L7.90625 11L14.0938 17.1875" strokeOpacity="0.7" strokeWidth="2.0625" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </Link>
                         <Link className="rounded-lg px-4 py-2" href="#">
-                            <svg className="stroke-zinc-600" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                            <svg className="stroke-zinc-500" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
                                 <path d="M11.0002 4.58341V12.3751M13.7502 6.41675L11.0002 3.66675L8.25016 6.41675M4.5835 11.0001V15.5834C4.5835 16.0696 4.77665 16.536 5.12047 16.8798C5.46428 17.2236 5.9306 17.4167 6.41683 17.4167H15.5835C16.0697 17.4167 16.536 17.2236 16.8799 16.8798C17.2237 16.536 17.4168 16.0696 17.4168 15.5834V11.0001" strokeOpacity="0.7" strokeWidth="1.83333" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </Link>
@@ -186,7 +188,7 @@ export default function CreateEvent() {
                             setFile(e.target.files[0]);
                         }
                     }} />
-                    <Image className="object-cover w-full h-72" src={file ? URL.createObjectURL(file) : getItem.event_poster_url} alt="Imagen de cabecera" width={400} height={400} />
+                    <Image className="object-cover w-full h-72" src={file ? URL.createObjectURL(file) : getItem.event_poster_url === "" ? "/logo.svg" : getItem.event_poster_url} alt="Imagen de cabecera" width={400} height={400} />
                 </figure>
                 <div className="flex justify-center items-center gap-8">
                     <figure className="w-28">
@@ -202,6 +204,7 @@ export default function CreateEvent() {
                         <textarea
                             className="text-4xl font-new font-extrabold w-full"
                             id="name"
+                            required
                             {...register('name')}
                         />
                     </div>
@@ -212,6 +215,16 @@ export default function CreateEvent() {
                         name="date"
                         label=""
                         placeholder="Fecha"
+                        errors={errors}
+                        register={register}
+                    />
+                </div>
+                <div className="px-8">
+                    <Input
+                        type="number"
+                        name="seats"
+                        label="Límite de inscripciones"
+                        placeholder='0'
                         errors={errors}
                         register={register}
                     />
@@ -244,7 +257,12 @@ export default function CreateEvent() {
                     <h2 className="text-xl font-new pb-[11px] pl-[9px]">Ubicación aproximada</h2>
                     <figure className="rounded-3xl bg-[#030712] text-pretty text-sm font-new overflow-hidden">
                         <div className="relative h-[240px] w-full">
-                            <LoadScript googleMapsApiKey="AIzaSyAcyybGF_nvmxoVvN4V3BZ6meekjSrTpxE" libraries={['places']}>
+                            <LoadScriptNext
+                                googleMapsApiKey="AIzaSyAcyybGF_nvmxoVvN4V3BZ6meekjSrTpxE"
+                                loadingElement={<p>Cargando Mapa...</p>}
+                                id="google-maps-script"
+                                libraries={['places']}
+                            >
                                 <div className="rounded-3xl overflow-hidden w-full h-full ">
                                     <GoogleMap
                                         mapContainerStyle={{ height: "200px", width: "100%" }}
@@ -334,18 +352,18 @@ export default function CreateEvent() {
                                             />
                                         )}
                                     </GoogleMap>
+                                    <figcaption className="px-4 py-[10px] text-white font-new text-sm absolute bottom-0 left-0 w-full">
+                                        <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
+                                            <input
+                                                type="text"
+                                                placeholder="Ingresa una dirección"
+                                                className="w-full bg-transparent text-white border-none outline-none"
+                                                {...register('location')}
+                                            />
+                                        </Autocomplete>
+                                    </figcaption>
                                 </div>
-                                <figcaption className="px-4 py-[10px] text-white font-new text-sm absolute bottom-0 left-0 w-full">
-                                    <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
-                                        <input
-                                            type="text"
-                                            placeholder="Ingresa una dirección"
-                                            className="w-full bg-transparent text-white border-none outline-none"
-                                            {...register('location')}
-                                        />
-                                    </Autocomplete>
-                                </figcaption>
-                            </LoadScript>
+                            </LoadScriptNext>
                         </div>
                     </figure>
                 </div>
@@ -354,7 +372,7 @@ export default function CreateEvent() {
                         type="submit"
                         className="rounded-[25px] bg-[#030712] h-[60px] w-72 text-white font-new text-2xl font-normal"
                     >
-                        Inscribirse
+                        {params.id ? 'Editar evento' : 'Crear evento'}
                     </button>
                 </div>
             </form>
