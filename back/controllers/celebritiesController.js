@@ -70,7 +70,7 @@ export const createCelebrity = async (req, res) => {
 
     await prisma.$disconnect();
 
-    return res.status(201).json({ message: "Celebridad creada" });
+    return res.status(201).json({ message: "Celebridad creada exitosamente." });
   } catch (error) {
     await prisma.$disconnect();
 

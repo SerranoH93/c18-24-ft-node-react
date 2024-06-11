@@ -35,6 +35,7 @@ export const login = async (req, res) => {
         token: tokenSession,
         user: userData,
         celebrity: celebrityData,
+        message: "Inicio de sesión exitoso.",
       });
     } else {
       return res
@@ -88,7 +89,10 @@ export const register = async (req, res) => {
 
     await prisma.$disconnect();
 
-    return res.status(201).json({ user_id: userCreated.id });
+    return res.status(201).json({ 
+      user_id: userCreated.id, 
+      message: "Usuario creado exitosamente.", 
+    });
   } catch (error) {
     await prisma.$disconnect();
 

@@ -22,7 +22,7 @@ export const createEvent = async (req, res) => {
 
     await prisma.$disconnect();
 
-    return res.status(201).json({ message: "Evento creado" });
+    return res.status(201).json({ message: "Evento creado exitosamente." });
   } catch (error) {
     await prisma.$disconnect();
 
