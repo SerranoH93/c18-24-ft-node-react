@@ -136,7 +136,7 @@ export const retrieveEventByUUID = async (req, res) => {
     await prisma.$disconnect();
 
     if (!eventData) {
-      return res.status(404).json({ message: "Evento no existe" });
+      return res.status(404).json({ message: "Evento no existe." });
     }
 
     const user_eventData = await prisma.users_events.findFirst({
@@ -165,7 +165,11 @@ export const retrieveEventByUUID = async (req, res) => {
 export const updateEventByUUID = async (req, res) => {
   try {
     if (req.files) {
-      const uploadResult = await uploadImage("events", uuid, req.files.data);
+      const uploadResult = await uploadImage(
+        "events",
+        req.params.event_uuid,
+        req.files.data
+      );
       req.body.event_poster_url = uploadResult.secure_url;
     }
 
@@ -176,7 +180,9 @@ export const updateEventByUUID = async (req, res) => {
 
     await prisma.$disconnect();
 
-    return res.status(200).json({ message: "Evento actualizado" });
+    return res
+      .status(200)
+      .json({ message: "Evento actualizado exitosamente." });
   } catch (error) {
     await prisma.$disconnect();
 
@@ -193,7 +199,7 @@ export const closeEvent = async (req, res) => {
 
     await prisma.$disconnect();
 
-    return res.status(200).json({ message: "Evento cerrado" });
+    return res.status(200).json({ message: "Evento cerrado exitosamente." });
   } catch (error) {
     await prisma.$disconnect();
 

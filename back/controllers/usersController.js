@@ -11,7 +11,7 @@ export async function getAllUsers(req, res) {
   ]);
 
   if (!hasRequiredRole) {
-    return res.status(401).json({ message: "No está autorizado" });
+    return res.status(401).json({ message: "No está autorizado." });
   }
 
   const allUsers = await prisma.users.findMany();
@@ -33,7 +33,7 @@ export async function getAllUsersPaginated(req, res) {
   ]);
 
   if (!hasRequiredRole) {
-    return res.status(401).json({ message: "No está autorizado" });
+    return res.status(401).json({ message: "No está autorizado." });
   }
 
   const take = parseInt(req.query.take) || 10;
@@ -83,7 +83,7 @@ export async function retrieveUserById(req, res) {
   ]);
 
   if (!hasRequiredRole) {
-    return res.status(401).json({ message: "No está autorizado" });
+    return res.status(401).json({ message: "No está autorizado." });
   }
 
   try {
@@ -94,7 +94,7 @@ export async function retrieveUserById(req, res) {
     await prisma.$disconnect();
 
     if (!userData) {
-      return res.status(404).json({ message: "Usuario no existe" });
+      return res.status(404).json({ message: "Usuario no existe." });
     }
 
     res.status(200).json({

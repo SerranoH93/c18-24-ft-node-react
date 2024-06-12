@@ -40,7 +40,7 @@ export const login = async (req, res) => {
     } else {
       return res
         .status(401)
-        .json({ message: "Email y/o contraseña incorrecta" });
+        .json({ message: "Email y/o contraseña incorrecta." });
     }
   } catch (error) {
     await prisma.$disconnect();
@@ -48,7 +48,7 @@ export const login = async (req, res) => {
     if (error.code === "P2025") {
       return res
         .status(401)
-        .json({ message: "Email y/o contraseña incorrecta" });
+        .json({ message: "Email y/o contraseña incorrecta." });
     }
   }
 };
@@ -65,7 +65,7 @@ export const register = async (req, res) => {
     await prisma.$disconnect();
 
     if (createdUser) {
-      return res.status(409).json({ message: "Email ya existe" });
+      return res.status(409).json({ message: "Email ya existe." });
     }
 
     if (req.files) {
@@ -89,9 +89,9 @@ export const register = async (req, res) => {
 
     await prisma.$disconnect();
 
-    return res.status(201).json({ 
-      user_id: userCreated.id, 
-      message: "Usuario creado exitosamente.", 
+    return res.status(201).json({
+      user_id: userCreated.id,
+      message: "Usuario creado exitosamente.",
     });
   } catch (error) {
     await prisma.$disconnect();

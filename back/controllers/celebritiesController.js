@@ -13,7 +13,7 @@ export const createCelebrity = async (req, res) => {
     await prisma.$disconnect();
 
     if (createdCelebrity) {
-      return res.status(409).json({ message: "Celebridad ya existe" });
+      return res.status(409).json({ message: "Celebridad ya existe." });
     }
 
     const uploadResult = await uploadImage(
@@ -97,7 +97,7 @@ export const retrieveCelebrityById = async (req, res) => {
     await prisma.$disconnect();
 
     if (!celebrityData) {
-      return res.status(404).json({ message: "Celebridad no existe" });
+      return res.status(404).json({ message: "Celebridad no existe." });
     }
 
     res.status(200).json({
