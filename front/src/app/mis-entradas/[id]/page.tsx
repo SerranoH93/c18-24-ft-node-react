@@ -12,12 +12,12 @@ interface Params {
 }
 
 export default function App(params: Params) {
-    const useFetch = useFetchHook();
+    const getUseFetch = useFetchHook();
     const [getItem, setGetItem] = useState([]);
     const { id } = params.params;
 
-    const GetMyEvents = async () => {
-        const data = await useFetch({
+    const getEvents = async () => {
+        const data = await getUseFetch({
             endpoint: `users_events/${id}`,//${user id de la sesión}`,
             method: 'get'
         });
@@ -26,7 +26,7 @@ export default function App(params: Params) {
         setGetItem(data);
     }
     useEffect(() => {
-        GetMyEvents()
+        getEvents()
     }
         , []);
     return (
@@ -46,9 +46,9 @@ export default function App(params: Params) {
 
                 {getItem.length > 0 && getItem.map((item: any) => {
                     return (
-                        <div>
+                        <div key={item.events.uuid}>
                             <hr />
-                            <div key={item.events.uuid} className="flex flex-row gap-3 my-4">
+                            <div className="flex flex-row gap-3 my-4">
                                 <div>
                                     <Image
                                         className="rounded-xl object-cover w-40 h-[200px]"
