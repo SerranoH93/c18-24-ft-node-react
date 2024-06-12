@@ -49,9 +49,8 @@ Con una interfaz intuitiva y herramientas robustas, Circle simplifica todo el pr
 ### UX/UI
 ![Figma](https://img.shields.io/badge/figma%20-%20pr?style=for-the-badge&logo=figma&logoColor=%23ffffff&labelColor=%23F24E1E&color=%23F24E1E)
 
-### Testing
-![Postman](https://img.shields.io/badge/postman%20-%20pr?style=for-the-badge&logo=postman&logoColor=%23ffffff&labelColor=%23FF6C37&color=%23FF6C37)
-
+### Testing y Documentación de API
+[![Postman](https://img.shields.io/badge/postman%20-%20pr?style=for-the-badge&logo=postman&logoColor=%23ffffff&labelColor=%23FF6C37&color=%23FF6C37)](https://documenter.getpostman.com/view/36260299/2sA3XPBhJ8)
 
 ### Gestión del Proyecto
 ![Trello](https://img.shields.io/badge/Trello-%23026AA7.svg?style=for-the-badge&logo=Trello&logoColor=white)
