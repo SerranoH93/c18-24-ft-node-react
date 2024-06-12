@@ -8,6 +8,7 @@ import CardEvent from "@/components/cardevent";
 import { fetchEvents, Event } from "@/hooks/getEventHook";
 import SearchBar from '@/components/SearchBar';
 import Image from 'next/image';
+import { LoadScript, LoadScriptNext } from '@react-google-maps/api';
 
 export default function Home() {
   //* Se obtienen del estado global el token y el usuario
@@ -115,6 +116,11 @@ export default function Home() {
 
 
       </div>
+      <LoadScript
+        googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string}
+        id="google-maps-script"
+        libraries={['places']}
+      ></LoadScript>
 
     </main>
   );

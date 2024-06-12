@@ -12,13 +12,11 @@ interface Params {
 }
 
 export default function App(params: Params) {
-    console.log(params.params.id);
-
-    const [getItem, setGetItem] = useState([]);
     const useFetch = useFetchHook();
+    const [getItem, setGetItem] = useState([]);
     const { id } = params.params;
 
-    const getMyEvents = async () => {
+    const GetMyEvents = async () => {
         const data = await useFetch({
             endpoint: `users_events/${id}`,//${user id de la sesión}`,
             method: 'get'
@@ -28,7 +26,7 @@ export default function App(params: Params) {
         setGetItem(data);
     }
     useEffect(() => {
-        getMyEvents()
+        GetMyEvents()
     }
         , []);
     return (
