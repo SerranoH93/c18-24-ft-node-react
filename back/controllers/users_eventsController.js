@@ -3,7 +3,7 @@ import prisma from "../utils/prisma.js";
 export const registerUserEvent = async (req, res) => {
   const userData = await prisma.users.findUnique({
     where: {
-      id: req.body.user_id,
+      id: Number(req.body.user_id),
     },
   });
 
@@ -27,7 +27,7 @@ export const registerUserEvent = async (req, res) => {
 
   await prisma.users_events.create({
     data: {
-      user_id: req.body.user_id,
+      user_id: Number(req.body.user_id),
       event_uuid: req.body.event_uuid,
     },
   });
@@ -49,6 +49,8 @@ export const getAllUserEvents = async (req, res) => {
         select: {
           uuid: true,
           name: true,
+          location: true,
+          event_poster_url: true,
           celebrities: {
             select: {
               celebrity_alias: true,
