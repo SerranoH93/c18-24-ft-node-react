@@ -22,7 +22,7 @@ export function useFetchHook() {
     }: AuthFetchProps) => {
         try {
             const { data } = await axios({
-                url: `http://localhost:3001/api/${endpoint}`,
+                url: `https://deploytest-tc4w.onrender.com/api/${endpoint}`,
                 method,
                 data: formData,
                 ...options
