@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { GoogleMap, LoadScript, LoadScriptNext, Marker } from "@react-google-maps/api";
 import Link from "next/link";
 import { userAuthStore } from "@/store/userAuthStore";
 import { useFetchHook } from "@/hooks/useFetchHook";
@@ -201,8 +201,8 @@ export default function App({ params }: { params: Params }) {
                 <h2 className="text-xl font-new pb-[11px] pl-[9px]">Ubicación aproximada</h2>
                 <div className="rounded-3xl bg-[#030712] text-pretty text-sm font-new overflow-hidden">
                     <div className="relative h-[260px] w-full">
-                        <LoadScript
-                            googleMapsApiKey="AIzaSyAcyybGF_nvmxoVvN4V3BZ6meekjSrTpxE"
+                        <LoadScriptNext
+                            googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string}
                             loadingElement={<p>Cargando Mapa...</p>}
                             id="google-maps-script"
                             libraries={['places']}
@@ -309,10 +309,10 @@ export default function App({ params }: { params: Params }) {
                                     </GoogleMap>
                                 </div>
                             )}
-                            <div className="px-4 py-[10px] text-white font-new text-sm absolute bottom-0 left-0 w-full">
-                                {nameLocation}
-                            </div>
-                        </LoadScript>
+                        </LoadScriptNext>
+                        <div className="px-4 py-[10px] text-white font-new text-sm absolute bottom-0 left-0 w-full">
+                            {nameLocation}
+                        </div>
                     </div>
                 </div>
             </div>
