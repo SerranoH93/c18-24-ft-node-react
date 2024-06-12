@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, Method } from 'axios'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 interface AuthFetchProps {
     endpoint: string
@@ -26,15 +27,18 @@ export function useFetchHook() {
                 data: formData,
                 ...options
             })
-            console.log(data);
-
+            toast.success(data.message, {
+                richColors: true
+            })
             if (redirectRoute) {
                 router.push(redirectRoute)
                 router.refresh();
             }
             return data
         } catch (error: any) {
-            console.log("error");
+            toast.error(error.response.data.message, {
+                richColors: true
+            })
         }
     }
 
