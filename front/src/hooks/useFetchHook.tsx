@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, Method } from 'axios'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 interface AuthFetchProps {
     endpoint: string
@@ -21,20 +22,23 @@ export function useFetchHook() {
     }: AuthFetchProps) => {
         try {
             const { data } = await axios({
-                url: `http://localhost:3001/api/${endpoint}`,
+                url: `https://deploytest-tc4w.onrender.com/api/${endpoint}`,
                 method,
                 data: formData,
                 ...options
             })
-            console.log(data);
-
+            toast.success(data.message, {
+                richColors: true
+            })
             if (redirectRoute) {
                 router.push(redirectRoute)
                 router.refresh();
             }
             return data
         } catch (error: any) {
-            console.log("error");
+            toast.error(error.response.data.message, {
+                richColors: true
+            })
         }
     }
 

@@ -1,4 +1,4 @@
-import axios, {AxiosRequestConfig, Method} from "axios";
+import axios, { AxiosRequestConfig, Method } from "axios";
 
 interface User {
     first_name: string;
@@ -27,15 +27,15 @@ export interface Event {
 
 export const fetchEvents = async (
     endpoint: string,
-    options?: AxiosRequestConfig<any>        
+    options?: AxiosRequestConfig<any>
 ): Promise<Event[]> => {
     try {
         const { data } = await axios({
-            url: `http://localhost:3001/api/${endpoint}`,
+            url: `https://deploytest-tc4w.onrender.com/api/${endpoint}`,
             method: 'get',
             ...options
         });
-        
+
         console.log(data);
 
         return data.data as Event[];
