@@ -1,9 +1,6 @@
 import express from "express";
 import parseMultipartForm from "../middlewares/parseMultipartFormMiddleware.js";
-import {
-  eventCreationValidationMiddleware,
-  eventUpdateValidationMiddleware,
-} from "../middlewares/eventValidationMiddleware.js";
+import eventValidationMiddleware from "../middlewares/eventValidationMiddleware.js";
 import {
   createEvent,
   getAllEvents,
@@ -18,16 +15,16 @@ const router = express.Router();
 router.post(
   "/create",
   parseMultipartForm,
-  eventCreationValidationMiddleware,
+  eventValidationMiddleware,
   createEvent
 );
 router.get("/", getAllEvents);
 router.get("/page", getAllEventsPaginated);
 router.get("/retrieve", retrieveEventByUUID);
 router.put(
-  "/:event_uuid",
+  "/update/:event_uuid",
   parseMultipartForm,
-  eventUpdateValidationMiddleware,
+  eventValidationMiddleware,
   updateEventByUUID
 );
 router.get("/close/:event_uuid", closeEvent);
