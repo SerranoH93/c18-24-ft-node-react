@@ -166,6 +166,8 @@ export default function CreateEvent() {
     };
 
     console.log(watch());
+    console.log(errors);
+
 
 
     return (
