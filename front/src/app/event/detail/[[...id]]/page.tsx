@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { GoogleMap, LoadScript, LoadScriptNext, Marker } from "@react-google-maps/api";
+import { GoogleMap, Marker } from "@react-google-maps/api";
 import Link from "next/link";
 import { userAuthStore } from "@/store/userAuthStore";
 import { useFetchHook } from "@/hooks/useFetchHook";
-import { Avatar, AvatarGroup, AvatarIcon } from "@nextui-org/avatar";
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react";
+import { Avatar, AvatarGroup } from "@nextui-org/avatar";
+import { Modal, ModalBody, ModalContent, useDisclosure } from "@nextui-org/react";
 
 interface Params {
     id: string[];
@@ -25,34 +25,42 @@ export default function App({ params }: { params: Params }) {
         name: "",
         about: "",
         date: "",
+        seats: "",
         location: "",
         price: "",
         event_poster_url: "",
         celebrity_id: "",
         avatar_url: "",
-        uuid: ""
+        uuid: "",
+        users: [],
+        isUserRegistered: ''
     });
+    console.log("Datos extraídos:", getItem);
+
     const getUseFetch = useFetchHook()
     //Carga de datos
     const getTask = async () => {
-        const data = await getUseFetch({
+        const res = await getUseFetch({
             endpoint: `events/retrieve?event_uuid=${uuid}&user_id=${id}`,//${user id de la sesion}`,
             method: 'get'
         });
 
-        console.log(data);
+        console.log(res);
 
         setGetItem({
-            id: data.data.id,
-            name: data.data.name,
-            about: data.data.about,
-            date: data.data.date,
-            location: data.data.location,
-            price: data.data.price,
-            event_poster_url: data.data.event_poster_url, // data.data.event_poster_url || null,
+            id: res.data.id,
+            name: res.data.name,
+            about: res.data.about,
+            date: res.data.date,
+            seats: res.data.seats,
+            location: res.data.location,
+            price: res.data.price,
+            event_poster_url: res.data.event_poster_url, // data.data.event_poster_url || null,
             celebrity_id: id,
-            avatar_url: data.data.celebrities.users.avatar_url,
-            uuid: data.data.uuid
+            avatar_url: res.data.celebrities.users.avatar_url,
+            uuid: res.data.uuid,
+            users: res.data.users,
+            isUserRegistered: res.data.isUserRegistered
         });
         setDatosCargados(true);
     }
@@ -118,7 +126,6 @@ export default function App({ params }: { params: Params }) {
 
     return (
         <section className="flex flex-col pb-10">
-            <script async src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string}&callback=initMap`}></script>
             <figure className="relative flex justify-center items-center w-full h-72 shadow-md">
                 <div className="absolute flex justify-between px-4 w-full top-2 z-30">
                     <Link className="rounded-lg px-4 py-2" href="/">
@@ -159,36 +166,30 @@ export default function App({ params }: { params: Params }) {
             </div>
             <div onClick={onOpen} className="flex flex-col justify-center items-center gap-2 w-44 h-16 py-1.5 px-5 rounded-3xl bg-[#030712] ml-8 mt-4">
                 <div className="h-8">
-                    <AvatarGroup
-                        classNames={{
-                            count: "bg-[#D9D9D9] border-2 border-[#030712]",
-                        }}
-                        total={20}
-                        size="sm"
-                    >
-                        <Avatar classNames={{
-                            base: "border-2 border-[#030712]",
-                        }} src="https://i.pravatar.cc/150?u=a042581f4e29026024d" />
-                        <Avatar classNames={{
-                            base: "border-2 border-[#030712]",
-                        }} src="https://i.pravatar.cc/150?u=a04258a2462d826712d" />
-                        <Avatar classNames={{
-                            base: "border-2 border-[#030712]",
-                        }} src="https://i.pravatar.cc/150?u=a042581f4e29026704d" />
-                        <Avatar classNames={{
-                            base: "border-2 border-[#030712]",
-                        }} src="https://i.pravatar.cc/150?u=a04258114e29026302d" />
-                        <Avatar classNames={{
-                            base: "border-2 border-[#030712]",
-                        }} src="https://i.pravatar.cc/150?u=a04258114e29026702d" />
-                        <Avatar classNames={{
-                            base: "border-2 border-[#030712]",
-                        }} src="https://i.pravatar.cc/150?u=a04258114e29026708c" />
-                    </AvatarGroup>
+                    {
+                        getItem.users.length > 0 ?
+                            <AvatarGroup
+                                classNames={{
+                                    count: "bg-[#D9D9D9] border-2 border-[#030712]",
+                                }}
+                                total={getItem.users.length}
+                                size="sm"
+                            >
+                                {
+                                    getItem.users.map((user) => {
+                                        return (
+                                            <Avatar classNames={{
+                                                base: "border-2 border-[#030712]",
+                                            }} src={user.avatar_url} />
+                                        )
+                                    })
+                                }
+                            </AvatarGroup> : <p className="text-xs pt-4 text-zinc-500">Aun no hay inscripciones</p>
+                    }
                 </div>
                 <div className="flex w-full justify-between">
                     <p className="text-xs text-white font-new">Inscriptos</p>
-                    <p className="text-xs text-white font-semibold font-new">25/50</p>
+                    <p className="text-xs text-white font-semibold font-new">{`${getItem.users.length}/${getItem.seats}`}</p>
                 </div>
             </div>
             <div className="px-8 pt-4">
@@ -202,11 +203,11 @@ export default function App({ params }: { params: Params }) {
             <div className="flex justify-center gap-4 items-center w-full px-8 py-5">
 
                 <button className="rounded-full h-12 w-1/2 px-6  placeholder-zinc-700 outline-none ring-2 ring-zinc-400 border-transparent text-zinc-400 text-lg font-bold">
-                    {getItem.price === "0" ? "0" : `$${getItem.price}`}
+                    {getItem.price === "0" ? "Entrada gratuita" : `Entrada $${getItem.price}`}
                 </button>
-                <button className="rounded-[30px] bg-[#030712] h-12 w-1/2 text-white font-new text-lg font-medium">
+                {/* <button className="rounded-[30px] bg-[#030712] h-12 w-1/2 text-white font-new text-lg font-medium">
                     {getItem.price === "0" ? "Gratis" : `Comprar entrada`}
-                </button>
+                </button> */}
             </div>
             <div className="px-8 pt-4">
                 <h2 className="text-xl font-new pb-[11px] pl-[9px]">Ubicación aproximada</h2>
@@ -321,9 +322,17 @@ export default function App({ params }: { params: Params }) {
                 </div>
             </div>
             <div className="flex justify-center items-center w-full py-9">
-                <button className="rounded-[25px] bg-[#030712] h-[60px] w-72 text-white font-new text-2xl font-normal">
-                    Inscribirse
-                </button>
+                {
+                    getItem.isUserRegistered === "true" ? (
+                        <button className="rounded-[25px] bg-[#030712] h-[60px] w-72 text-white font-new text-2xl font-normal">
+                            Inscripto
+                        </button>
+                    ) : (
+                        <button className="rounded-[25px] bg-[#030712] h-[60px] w-72 text-white font-new text-2xl font-normal">
+                            Inscribirse
+                        </button>
+                    )
+                }
             </div>
             <div className="pt-4">
                 <h2 className="text-xl font-new pb-[11px] pl-[41px]">Comentarios</h2>
@@ -360,36 +369,27 @@ export default function App({ params }: { params: Params }) {
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
+                backdrop="blur"
                 placement="center"
+                className="mx-4"
             >
                 <ModalContent>
                     {(onClose) => (
                         <>
                             <ModalBody>
-                                <div className="flex gap-4 items-center">
-                                    <Avatar classNames={{
-                                        base: "border-2 border-[#030712]",
-                                    }} src="https://i.pravatar.cc/150?u=a042581f4e29026024d" />
-                                    <p>Sofia Ramirez</p>
-                                </div>
-                                <div className="flex gap-4 items-center">
-                                    <Avatar classNames={{
-                                        base: "border-2 border-[#030712]",
-                                    }} src="https://i.pravatar.cc/150?u=a04258a2462d826712d" />
-                                    <p>Sofia Ramirez</p>
-                                </div>
-                                <div className="flex gap-4 items-center">
-                                    <Avatar classNames={{
-                                        base: "border-2 border-[#030712]",
-                                    }} src="https://i.pravatar.cc/150?u=a042581f4e29026704d" />
-                                    <p>Sofia Ramirez</p>
-                                </div>
-                                <div className="flex gap-4 items-center">
-                                    <Avatar classNames={{
-                                        base: "border-2 border-[#030712]",
-                                    }} src="https://i.pravatar.cc/150?u=a04258114e29026302d" />
-                                    <p>Sofia Ramirez</p>
-                                </div>
+                                {
+                                    getItem.users.length > 0 ?
+                                        getItem.users.map((user) => {
+                                            return (
+                                                <div className="flex gap-4 items-center">
+                                                    <Avatar classNames={{
+                                                        base: "border-2 border-[#030712]",
+                                                    }} src={user.avatar_url} />
+                                                    <p>{user.name}</p>
+                                                </div>
+                                            )
+                                        }) : <p className="text-xl text-center text-zinc-500">Aun no hay inscripciones</p>
+                                }
                             </ModalBody>
                         </>
                     )}

@@ -20,7 +20,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ handleInput, handleButton, input 
                 onChange={handleInput}
                 value={input}
                 placeholder='Busca eventos o perfiles de usuarios' />
-            <button className="bg-black rounded-full p-3 ml-1 flex items-center justify-center" onClick={handleButton}>
+            <button className="bg-[#030712] rounded-full p-3 ml-1 flex items-center justify-center" onClick={handleButton}>
                 <Image src="/search.svg" alt="Search" width={20} height={20} className="w-5 h-5" />
             </button>
         </div>

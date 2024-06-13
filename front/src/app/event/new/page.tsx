@@ -35,6 +35,7 @@ export default function CreateEvent() {
         name: "",
         about: "",
         date: "",
+        seats: "",
         location: "",
         price: "",
         event_poster_url: "",
@@ -45,6 +46,8 @@ export default function CreateEvent() {
     const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
     const getUseFetch = useFetchHook();
     const params = useParams();
+    console.log(params);
+
     const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<Inputs>({
         resolver: zodResolver(eventCreationSchema)
     });
@@ -60,6 +63,7 @@ export default function CreateEvent() {
             name: data.data.name,
             about: data.data.about,
             date: data.data.date,
+            seats: data.data.seats,
             location: data.data.location,
             price: data.data.price,
             event_poster_url: data.data.event_poster_url, // data.data.event_poster_url || null,
@@ -93,10 +97,11 @@ export default function CreateEvent() {
                 setValue('name', getItem.name);
                 setValue('about', getItem.about);
                 setValue('date', date);
+                setValue('seats', String(getItem.seats));
                 setValue('location', location[0]);
                 setValue('price', String(getItem.price));
                 setValue('event_poster_url', getItem.event_poster_url);
-                setValue('celebrity_id', getItem.celebrity_id);
+                setValue('celebrity_id', String(getItem.celebrity_id));
             }
         }
     }, [getItem]);
@@ -121,9 +126,9 @@ export default function CreateEvent() {
 
         if (params.id) {
             await getUseFetch({
-                endpoint: `events/${params.id}`,
+                endpoint: `events/update/${params.id[1]}`,
                 method: 'put',
-                redirectRoute: `/event/detail/${params.id}`,
+                redirectRoute: `/event/detail/${params.id[0]}/${params.id[1]}`,
                 formData: formData,
                 options: {
                     headers: {

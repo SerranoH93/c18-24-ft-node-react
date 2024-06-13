@@ -66,7 +66,7 @@ export default function RegisterEvent() {
 
     return (
         <section className='flex flex-col mt-10 ml-8 mr-8'>
-            <h1 className='text-[color:var(--text-color)] text-4xl'>Regístrate como artista</h1>
+            <h1 className='text-[color:var(--text-color)] text-4xl font-BeseNeue '>Regístrate<br />como artista</h1>
             <form onSubmit={onSubmit} className="flex flex-col gap-2">
                 <Input
                     label="Usuario"
