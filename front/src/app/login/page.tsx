@@ -46,8 +46,8 @@ export default function Login() {
             <div className='text-[color:var(--text-color)]' id="title">
                 <h2 className="text-4xl">Bienvenido</h2>
                 <p>Inicia sesión con tu correo</p>
-                <p>electrónco y contraseña o continúa</p>
-                <p>con las redes sociales</p>
+                <p>electrónico y contraseña o continúa</p>
+                <p>con tus redes sociales</p>
             </div>
 
             <form onSubmit={onSubmit} className='flex flex-col mt-7'>
@@ -81,7 +81,7 @@ export default function Login() {
                 </div>
 
                 <div className="mt-7">
-                    <p>¿No tienes cuenta en XXXXX? <a className='font-bold underline' href="/register">Registrate</a></p>
+                    <p>¿No tienes cuenta en CIRCLE? <a className='font-bold underline' href="/register">Registrate</a></p>
                 </div>
 
             </div>
