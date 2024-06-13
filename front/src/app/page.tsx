@@ -63,7 +63,7 @@ export default function Home() {
 
   return (
     <main >
-      <div className="flex flex-col mt-14 mx-6">
+      <div className="flex flex-col mt-14 mx-6 sm:mx-20">
       <div className=" flex flex-row items-center justify-between">
         <div>
           <Link href="/"><Image src="/logo.svg" alt="Logo" width={100} height={41} /></Link>
@@ -71,9 +71,14 @@ export default function Home() {
         <div>
           {token === null ? 
             <div>
-              <Link href="/login"><button className="py-2.5 px-7 bg-black text-gray-100 rounded-full" >Iniciar sesión</button></Link> 
-              <Link href="/login"><button className="py-2.5 px-7 bg-[#363DDA] text-gray-100 rounded-full hidden sm:inline-block" >Registrarse</button></Link></div>  : <Profile />} 
-            </div>
+              <Link href="/login">
+                <button className="py-2.5 px-7 bg-black text-gray-100 rounded-full" >Iniciar sesión</button>
+              </Link> 
+              <Link href="/login">
+                <button className="py-2.5 px-7 bg-[#363DDA] text-gray-100 rounded-full hidden sm:inline-block" >Registrarse</button>
+              </Link>
+            </div>  : <Profile />} 
+        </div>
       </div>
 
       <div className="py-5">
@@ -113,9 +118,9 @@ export default function Home() {
           <button className="py-2 px-4 bg-black text-gray-100 rounded-full">Ver todos</button>
         </div>
 
-        <div className='flex flex-col items-center justify-between sm:grid sm:grid-cols-2 sm:gap-4 sm:items-center ml-12'>
+        <div className='flex flex-col items-center justify-between sm:grid sm:grid-cols-2 sm:gap-4 sm:items-center ml-'>
           {events.map(event => (
-            <div key={event.id} className='flex-shrink-0 mb-6 sm:w-auto'>
+            <div key={event.id} className='flex-shrink-0 mb-6 sm:w-auto sm:ml-12'>
               <CardEvent
 
                 uuid={event.uuid}
@@ -128,9 +133,11 @@ export default function Home() {
           ))}
         </div>
       </section>        
-      </div>
-      
-      <Footer/>   
+      </div>   
+
+      <div className='hidden sm:inline'>
+        <Footer/>      
+      </div>  
     </main>
   );
 }
