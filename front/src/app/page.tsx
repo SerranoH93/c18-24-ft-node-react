@@ -72,7 +72,7 @@ export default function Home() {
               <Link className='mr-1.5' href="/login">
                 <button className="py-2.5 px-7 bg-black text-gray-100 rounded-full" >Iniciar sesión</button>
               </Link> 
-              <Link href="/login">
+              <Link href="/register">
                 <button className="py-2.5 px-7 bg-[#363DDA] text-gray-100 rounded-full hidden sm:inline-block" >Registrarse</button>
               </Link>
             </div>  : <Profile />} 
