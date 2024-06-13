@@ -31,16 +31,20 @@ export function useFetch() {
         data: formData,
         ...options,
       });
+
       toast.success(data.message, {
         richColors: true,
       });
+
       setToken(data.token);
       setUser(data.user);
       setCelebrity(data.celebrity);
+
       if (redirectRoute) {
         router.push(redirectRoute);
         router.refresh();
       }
+
       return data;
     } catch (error: any) {
       toast.error(error.response.data.message, {
