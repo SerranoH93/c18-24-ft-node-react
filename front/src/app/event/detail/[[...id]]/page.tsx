@@ -19,6 +19,7 @@ export default function App({ params }: { params: Params }) {
     const uuid = params.id[1]
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [datosCargados, setDatosCargados] = useState(false);
+    const [scriptLoaded, setScriptLoaded] = useState(false);
     const [getItem, setGetItem] = useState({
         id: "",
         name: "",
@@ -60,6 +61,15 @@ export default function App({ params }: { params: Params }) {
             getTask();
         }
     }, []);
+    useEffect(() => {
+        if (!scriptLoaded) {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string}&callback=initMap`;
+            script.async = true;
+            document.body.appendChild(script);
+            setScriptLoaded(true);
+        }
+    }, [scriptLoaded]);
     //Split de la ubicación
     let location = getItem.location.split('/');
     const nameLocation = location[0];
@@ -72,13 +82,20 @@ export default function App({ params }: { params: Params }) {
     if (!foundBlog && !datosCargados) {
         return (
             <section className="flex flex-col justify-center items-center h-screen w-full mt-14 px-2">
-                <h1
-                    className={
-                        "animate-pulse text-6xl font-bold bg-gradient-to-br from-zinc-600 via-zinc-400 to-zinc-700 bg-clip-text text-transparent"
-                    }
-                >
-                    Cargando...
-                </h1>
+                <div className="jelly-triangle">
+                    <div className="jelly-triangle__dot"></div>
+                    <div className="jelly-triangle__traveler"></div>
+                </div>
+
+                <svg width="0" height="0" className="jelly-maker">
+                    <defs>
+                        <filter id="uib-jelly-triangle-ooze">
+                            <feGaussianBlur in="SourceGraphic" stdDeviation="7.3" result="blur"></feGaussianBlur>
+                            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="ooze"></feColorMatrix>
+                            <feBlend in="SourceGraphic" in2="ooze"></feBlend>
+                        </filter>
+                    </defs>
+                </svg>
             </section>
         );
     }
@@ -95,19 +112,13 @@ export default function App({ params }: { params: Params }) {
                 <h2 className=" py-8 text-xl font-semibold text-center text-zinc-400">
                     Evento no encontrado, vuelve a menu o intenta recargar la página.
                 </h2>
-                <Image
-                    src="/cart/qrnofound.webp"
-                    alt="qr no encontrado"
-                    width={200}
-                    height={200}
-                    className="drop-shadow-[0_0px_20px_rgba(0,0,0,0.75)]"
-                />
             </section>
         );
     }
 
     return (
         <section className="flex flex-col pb-10">
+            <script async src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string}&callback=initMap`}></script>
             <figure className="relative flex justify-center items-center w-full h-72 shadow-md">
                 <div className="absolute flex justify-between px-4 w-full top-2 z-30">
                     <Link className="rounded-lg px-4 py-2" href="/">
@@ -201,115 +212,108 @@ export default function App({ params }: { params: Params }) {
                 <h2 className="text-xl font-new pb-[11px] pl-[9px]">Ubicación aproximada</h2>
                 <div className="rounded-3xl bg-[#030712] text-pretty text-sm font-new overflow-hidden">
                     <div className="relative h-[260px] w-full">
-                        <LoadScriptNext
-                            googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string}
-                            loadingElement={<p>Cargando Mapa...</p>}
-                            id="google-maps-script"
-                            libraries={['places']}
-                        >
-                            {window.google && window.google.maps && (
-                                <div className="rounded-3xl overflow-hidden w-full h-full ">
-                                    <GoogleMap
-                                        mapContainerStyle={{ height: "200px", width: "100%" }}
-                                        center={{ lat: Lat, lng: lng }}
-                                        zoom={13}
-                                        options={{
-                                            disableDefaultUI: true, // Desactiva todos los controles predeterminados del mapa
-                                            draggable: false, // Cambia el cursor del mapa
-                                            styles: [
-                                                {
-                                                    featureType: "water",
-                                                    elementType: "geometry",
-                                                    stylers: [
-                                                        { color: "#193341" }
-                                                    ]
-                                                },
-                                                {
-                                                    featureType: "landscape",
-                                                    elementType: "geometry",
-                                                    stylers: [
-                                                        { color: "#09090b" }
-                                                    ]
-                                                },
-                                                {
-                                                    featureType: "road",
-                                                    elementType: "geometry",
-                                                    stylers: [
-                                                        { color: "#27272a" } // Oculta iconos de carretera como peajes, estaciones de servicio, etc.
-                                                    ]
-                                                },
-                                                {
-                                                    featureType: "poi",
-                                                    stylers: [
-                                                        { visibility: "off" } // Oculta puntos de interés como tiendas, restaurantes, etc.
-                                                    ]
-                                                },
-                                                {
-                                                    featureType: "transit",
-                                                    elementType: "labels.icon",
-                                                    stylers: [
-                                                        { visibility: "off" } // Oculta iconos de transporte público
-                                                    ]
-                                                },
-                                                {
-                                                    featureType: "road",
-                                                    elementType: "labels.icon",
-                                                    stylers: [
-                                                        { visibility: "off" } // Oculta iconos de carretera como peajes, estaciones de servicio, etc.
-                                                    ]
-                                                },
-                                                {
-                                                    featureType: "administrative",
-                                                    elementType: "labels.text.fill",
-                                                    stylers: [
-                                                        { color: "#ffffff" } // Cambia el color del texto administrativo (por ejemplo, el nombre de las ciudades)
-                                                    ]
-                                                },
-                                                {
-                                                    featureType: "administrative.locality",
-                                                    elementType: "labels.text.fill",
-                                                    stylers: [
-                                                        { visibility: "off" } // Oculta el nombre de las localidades (ciudades, pueblos, etc.)
-                                                    ]
-                                                },
-                                                {
-                                                    featureType: "administrative.neighborhood",
-                                                    elementType: "labels.text.fill",
-                                                    stylers: [
-                                                        { visibility: "off" } // Oculta el nombre de los barrios
-                                                    ]
-                                                },
-                                                {
-                                                    featureType: "road",
-                                                    elementType: "labels.text.fill",
-                                                    stylers: [
-                                                        { visibility: "off" } // Oculta iconos de carretera como peajes, estaciones de servicio, etc.
-                                                    ]
-                                                },
-                                            ]
-                                        }}
-                                    >
+                        {window.google && window.google.maps && (
+                            <div className="rounded-3xl overflow-hidden w-full h-full ">
+                                <GoogleMap
+                                    mapContainerStyle={{ height: "200px", width: "100%" }}
+                                    center={{ lat: Lat, lng: lng }}
+                                    zoom={13}
+                                    options={{
+                                        disableDefaultUI: true, // Desactiva todos los controles predeterminados del mapa
+                                        draggable: false, // Cambia el cursor del mapa
+                                        styles: [
+                                            {
+                                                featureType: "water",
+                                                elementType: "geometry",
+                                                stylers: [
+                                                    { color: "#193341" }
+                                                ]
+                                            },
+                                            {
+                                                featureType: "landscape",
+                                                elementType: "geometry",
+                                                stylers: [
+                                                    { color: "#09090b" }
+                                                ]
+                                            },
+                                            {
+                                                featureType: "road",
+                                                elementType: "geometry",
+                                                stylers: [
+                                                    { color: "#27272a" } // Oculta iconos de carretera como peajes, estaciones de servicio, etc.
+                                                ]
+                                            },
+                                            {
+                                                featureType: "poi",
+                                                stylers: [
+                                                    { visibility: "off" } // Oculta puntos de interés como tiendas, restaurantes, etc.
+                                                ]
+                                            },
+                                            {
+                                                featureType: "transit",
+                                                elementType: "labels.icon",
+                                                stylers: [
+                                                    { visibility: "off" } // Oculta iconos de transporte público
+                                                ]
+                                            },
+                                            {
+                                                featureType: "road",
+                                                elementType: "labels.icon",
+                                                stylers: [
+                                                    { visibility: "off" } // Oculta iconos de carretera como peajes, estaciones de servicio, etc.
+                                                ]
+                                            },
+                                            {
+                                                featureType: "administrative",
+                                                elementType: "labels.text.fill",
+                                                stylers: [
+                                                    { color: "#ffffff" } // Cambia el color del texto administrativo (por ejemplo, el nombre de las ciudades)
+                                                ]
+                                            },
+                                            {
+                                                featureType: "administrative.locality",
+                                                elementType: "labels.text.fill",
+                                                stylers: [
+                                                    { visibility: "off" } // Oculta el nombre de las localidades (ciudades, pueblos, etc.)
+                                                ]
+                                            },
+                                            {
+                                                featureType: "administrative.neighborhood",
+                                                elementType: "labels.text.fill",
+                                                stylers: [
+                                                    { visibility: "off" } // Oculta el nombre de los barrios
+                                                ]
+                                            },
+                                            {
+                                                featureType: "road",
+                                                elementType: "labels.text.fill",
+                                                stylers: [
+                                                    { visibility: "off" } // Oculta iconos de carretera como peajes, estaciones de servicio, etc.
+                                                ]
+                                            },
+                                        ]
+                                    }}
+                                >
 
-                                        <Marker
-                                            position={{
-                                                lat: Lat,
-                                                lng: lng
-                                            }}
-                                            options={
-                                                {
-                                                    icon: {
-                                                        url: "/Ellipse12.png",
-                                                        scaledSize: new window.google.maps.Size(200, 200),
-                                                        anchor: new window.google.maps.Point(100, 100)
-                                                    }
+                                    <Marker
+                                        position={{
+                                            lat: Lat,
+                                            lng: lng
+                                        }}
+                                        options={
+                                            {
+                                                icon: {
+                                                    url: "/Ellipse12.png",
+                                                    scaledSize: new window.google.maps.Size(200, 200),
+                                                    anchor: new window.google.maps.Point(100, 100)
                                                 }
                                             }
-                                        />
+                                        }
+                                    />
 
-                                    </GoogleMap>
-                                </div>
-                            )}
-                        </LoadScriptNext>
+                                </GoogleMap>
+                            </div>
+                        )}
                         <div className="px-4 py-[10px] text-white font-new text-sm absolute bottom-0 left-0 w-full">
                             {nameLocation}
                         </div>
