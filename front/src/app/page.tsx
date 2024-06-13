@@ -55,8 +55,6 @@ export default function Home() {
   const windowSize = useWindowSize();
   const isSmallScreen = windowSize.width !== undefined && windowSize.width > 640;
 
-  console.log(windowSize)
-
 
   //* Maneja el logout --- Se movio al componente profile
 
@@ -71,7 +69,7 @@ export default function Home() {
         <div>
           {token === null ? 
             <div>
-              <Link href="/login">
+              <Link className='mr-1.5' href="/login">
                 <button className="py-2.5 px-7 bg-black text-gray-100 rounded-full" >Iniciar sesión</button>
               </Link> 
               <Link href="/login">
@@ -81,18 +79,24 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="py-5">
-        <SearchBar
+      <div className="py-5 sm:flex sm:flex-row sm:items-center">
+        <div className='sm:justify-start sm:mr-24 sm:w-3/4'>
+          <SearchBar
           handleInput={handleInputChange}
           handleButton={handleSearchButtonClick}
           input={searchInput}
         />
+        </div>
+        <div className=' hidden sm:inline-flex sm:justify-end sm:w-1/4'>
+        <Link href={`${user?.role === "follower" ? "/register/registercelebrity" : "/event/new"}`} className="text-2xl py-2 px-12 bg-black text-gray-100 rounded-full">Crear evento</Link>
+        </div>
+        
       </div>
 
       <section className="mt-6">
         <div className='flex items-center justify-between pb-2'>
           <h3 className="text-2xl mb-2.5">Próximos eventos</h3>
-          <Link href={`${user?.role === "follower" ? "/register/registercelebrity" : "/event/new"}`} className="py-2 px-4 bg-black text-gray-100 rounded-full">Crear evento</Link>
+          <Link href={`${user?.role === "follower" ? "/register/registercelebrity" : "/event/new"}`} className="py-2 px-4 bg-black text-gray-100 rounded-full sm:hidden">Crear evento</Link>
         </div>
         <div className='flex flex-row overflow-x-auto space-x-4 sm:justify-center sm:space-x-12'>
           {upcomingEvents.map(event => (
