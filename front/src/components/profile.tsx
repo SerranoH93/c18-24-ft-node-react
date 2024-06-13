@@ -1,5 +1,8 @@
+"use client";
+
 import { userAuthStore } from "@/store/userAuthStore";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function Profile() {
@@ -15,7 +18,7 @@ export default function Profile() {
 
     return (
         <div className="flex flex-row gap-1">
-            <button><img src="/ticket.svg" alt="" /></button>
+            <Link href={`/mis-entradas/${user?.id}`} className="flex justify-center"><img src="/ticket.svg" alt="" /></Link>
             <button><img src="/favorite.svg" alt="" /></button>
             <button><img src="/notifications.svg" alt="" /></button>
             <Popover placement="bottom-end" backdrop="opaque" classNames={{

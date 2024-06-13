@@ -165,6 +165,8 @@ export default function CreateEvent() {
     };
 
     console.log(watch());
+    console.log(errors);
+
 
 
     return (
@@ -258,7 +260,7 @@ export default function CreateEvent() {
                     <figure className="rounded-3xl bg-[#030712] text-pretty text-sm font-new overflow-hidden">
                         <div className="relative h-[240px] w-full">
                             <LoadScriptNext
-                                googleMapsApiKey="AIzaSyAcyybGF_nvmxoVvN4V3BZ6meekjSrTpxE"
+                                googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string}
                                 loadingElement={<p>Cargando Mapa...</p>}
                                 id="google-maps-script"
                                 libraries={['places']}
