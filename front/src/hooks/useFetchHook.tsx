@@ -27,9 +27,11 @@ export function useFetchHook() {
         data: formData,
         ...options,
       });
-      toast.success(data.message, {
-        richColors: true,
-      });
+      if (data.message) {
+        toast.success(data.message, {
+          richColors: true,
+        });
+      }
       if (redirectRoute) {
         router.push(redirectRoute);
         router.refresh();

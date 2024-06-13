@@ -32,9 +32,11 @@ export function useFetch() {
         ...options,
       });
 
-      toast.success(data.message, {
-        richColors: true,
-      });
+      if (data.message) {
+        toast.success(data.message, {
+          richColors: true,
+        });
+      }
 
       setToken(data.token);
       setUser(data.user);

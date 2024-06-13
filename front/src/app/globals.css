@@ -3,6 +3,15 @@
 @tailwind utilities;
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wdth,wght@0,87.5,500;1,87.5,500&display=swap");
 
+@layer base {
+    @font-face {
+        font-family: "BeseNeue";
+        font-style: normal;
+        font-weight: 900;
+        font-display: swap;
+        src: url(/fonts/BaseNeue-Black.woff2) format("woff2");
+    }
+}
 :root {
     --text-color: #030712;
 }

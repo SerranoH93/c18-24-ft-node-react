@@ -18,6 +18,7 @@ const config: Config = {
         extend: {
             fontFamily: {
                 new: ["Open Sans", "sans-serif"],
+                BeseNeue: ["BeseNeue", "normal"],
             },
             backgroundImage: {
                 "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
