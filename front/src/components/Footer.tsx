@@ -5,7 +5,7 @@ import React from 'react';
 
 const Footer: React.FC = () => {
     return (
-        <footer className="bg-[#222223] relative text-white py-[52px] px-[100px] w-full h-[524px] " >
+        <footer className="bg-[#222223] relative text-white py-[52px] px-[100px] w-full h-[524px] mt-20" >
             <div className="max-w-7xl  flex  flex-row justify-between " >
                 <div className="w-[600px] " >
                     <h2 className="text-2xl font-semibold mb-4">PREGUNTAS FRECUENTES</h2>
@@ -63,7 +63,7 @@ const Footer: React.FC = () => {
                     </div>
 
                     <div className=" right-0 bottom-0 absolute z-10 opacity-30 ">
-                    <Image width={372} height={296} src="/3d-glassy-rope-knot-shape 2.png" alt="3d footer"/>
+                    <Image width={372} height={296} src="/3d-img.svg" alt="3d footer"/>
                     </div>
 
 
