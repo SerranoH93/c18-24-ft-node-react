@@ -29,23 +29,40 @@ export default function Input(props: InputProps) {
     return (
         <div
             className={clsx(
-                type === "checkbox" ? "flex flex-row-reverse justify-center gap-2 mt-6 items-center text-[#1F2937]" : "relative flex flex-col gap-1 mt-[10px]",
+                type === "checkbox" ? "peer/check flex flex-row-reverse justify-center gap-2 mt-6 items-center text-[#1F2937]" : "relative flex flex-col gap-1 mt-[10px]",
                 errors[name] && "text-red-700"
             )}
         >
             <label htmlFor={name} className={clsx(
-                type === "checkbox" ? "" : "absolute top-2 left-6 text-xs text-[#383838]",
+                type === "checkbox" ? "flex flex-row-reverse justify-center items-center gap-2 select-none cursor-pointer" : "absolute top-2 left-6 text-xs text-[#383838]",
                 errors[name] && "text-red-700"
             )}>
                 {label}
+                {type === "checkbox" &&
+                    <div className='flex flex-row-reverse justify-center items-center select-none cursor-pointer'>
+                        <input
+                            className='peer appearance-none'
+                            type={type}
+                            id={name}
+                            placeholder={placeholder}
+                            {...register(name)}
+                            {...otherProps}
+                        />
+                        <span
+                            className={`inline-block w-5 h-5 rounded-full border-[#1F2937] border-2 relative cursor-pointer after:content-[''] after:absolute after:top-2/4 after:left-2/4 after:-translate-x-1/2 after:-translate-y-1/2 after:w-[10px] after:h-[10px] after:bg-[#1F2937] after:rounded-full after:opacity-0 peer-checked:after:opacity-100`}
+                        ></span>
+                    </div>
+                }
+
             </label>
-            <input
+
+            {type !== "checkbox" && <input
                 className={clsx(
                     type === "select" && "hidden",
-                    type === "checkbox" ? "peer cursor-pointer appearance-none after:opacity-100" : "rounded-full h-[61px] pt-1 px-6 w-full bg-zinc-300 placeholder-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent text-[#383838]",
                     type === "datetime-local" && "form-date__input custom-date-input",
                     type === "date" && "form-date__input custom-date-input",
                     type === "file" && "form-file__input custom-file-input pt-[22px]",
+                    "rounded-full h-[61px] pt-1 px-6 w-full bg-zinc-300 placeholder-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent text-[#383838]",
                     errors[name] && "text-red-700 focus:ring-red-500 bg-red-200"
                 )}
                 type={type}
@@ -53,7 +70,8 @@ export default function Input(props: InputProps) {
                 placeholder={placeholder}
                 {...register(name)}
                 {...otherProps}
-            />
+            />}
+
             {
                 icon && <div className='absolute top-[35%] left-[87%]'>
                     {icon}
@@ -88,9 +106,6 @@ export default function Input(props: InputProps) {
                     </svg>
                 </div>
             }
-            {type === "checkbox" && <span
-                className={`inline-block w-5 h-5 rounded-full border-[#1F2937] border-2 relative cursor-pointer after:content-[''] after:absolute after:top-2/4 after:left-2/4 after:-translate-x-1/2 after:-translate-y-1/2 after:w-[10px] after:h-[10px] after:bg-[#1F2937] after:rounded-full after:opacity-0 peer-checked:after:opacity-100 ${errors[name] && "border-red-700"}`}
-            ></span>}
             {errors[name] && <span className="text-sm text-red-700">{String(errors[name]?.message)}</span>}
         </div>
     );
