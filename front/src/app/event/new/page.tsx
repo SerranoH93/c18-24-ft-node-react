@@ -11,7 +11,6 @@ import { useForm } from "react-hook-form";
 import Input from '@/components/input';
 import Image from 'next/image';
 import Link from "next/link";
-import Footer from '@/components/Footer';
 
 
 type Inputs = {
@@ -36,6 +35,7 @@ export default function CreateEvent() {
         name: "",
         about: "",
         date: "",
+        seats: "",
         location: "",
         price: "",
         event_poster_url: "",
@@ -46,6 +46,8 @@ export default function CreateEvent() {
     const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
     const getUseFetch = useFetchHook();
     const params = useParams();
+    console.log(params);
+
     const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<Inputs>({
         resolver: zodResolver(eventCreationSchema)
     });
@@ -61,6 +63,7 @@ export default function CreateEvent() {
             name: data.data.name,
             about: data.data.about,
             date: data.data.date,
+            seats: data.data.seats,
             location: data.data.location,
             price: data.data.price,
             event_poster_url: data.data.event_poster_url, // data.data.event_poster_url || null,
@@ -94,10 +97,11 @@ export default function CreateEvent() {
                 setValue('name', getItem.name);
                 setValue('about', getItem.about);
                 setValue('date', date);
+                setValue('seats', String(getItem.seats));
                 setValue('location', location[0]);
                 setValue('price', String(getItem.price));
                 setValue('event_poster_url', getItem.event_poster_url);
-                setValue('celebrity_id', getItem.celebrity_id);
+                setValue('celebrity_id', String(getItem.celebrity_id));
             }
         }
     }, [getItem]);
@@ -122,9 +126,9 @@ export default function CreateEvent() {
 
         if (params.id) {
             await getUseFetch({
-                endpoint: `events/${params.id}`,
+                endpoint: `events/update/${params.id[1]}`,
                 method: 'put',
-                redirectRoute: `/event/detail/${params.id}`,
+                redirectRoute: `/event/detail/${params.id[0]}/${params.id[1]}`,
                 formData: formData,
                 options: {
                     headers: {
@@ -171,222 +175,220 @@ export default function CreateEvent() {
 
 
     return (
-        <div className="flex flex-col">
-            <section>
-                <form onSubmit={onSubmit}>
-                    <figure className="relative flex justify-center items-center w-full h-72 shadow-md">
-                        <div className="absolute flex justify-between px-4 w-full top-2 z-30">
-                            <Link className="rounded-lg px-4 py-2" href="/">
-                                <svg className="stroke-zinc-500" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
-                                    <path d="M14.0938 4.8125L7.90625 11L14.0938 17.1875" strokeOpacity="0.7" strokeWidth="2.0625" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            </Link>
-                            <Link className="rounded-lg px-4 py-2" href="#">
-                                <svg className="stroke-zinc-500" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
-                                    <path d="M11.0002 4.58341V12.3751M13.7502 6.41675L11.0002 3.66675L8.25016 6.41675M4.5835 11.0001V15.5834C4.5835 16.0696 4.77665 16.536 5.12047 16.8798C5.46428 17.2236 5.9306 17.4167 6.41683 17.4167H15.5835C16.0697 17.4167 16.536 17.2236 16.8799 16.8798C17.2237 16.536 17.4168 16.0696 17.4168 15.5834V11.0001" strokeOpacity="0.7" strokeWidth="1.83333" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            </Link>
-                        </div>
-                        <input className="absolute form-file__input custom-file-input w-full h-full text-transparent" type="file" onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                            if (e.target.files) {
-                                setFile(e.target.files[0]);
-                            }
-                        }} />
-                        <Image className="object-cover w-full h-72" src={file ? URL.createObjectURL(file) : getItem.event_poster_url === "" ? "/logo.svg" : getItem.event_poster_url} alt="Imagen de cabecera" width={400} height={400} />
+        <section className="flex flex-col pb-10">
+            <form onSubmit={onSubmit}>
+                <figure className="relative flex justify-center items-center w-full h-72 shadow-md">
+                    <div className="absolute flex justify-between px-4 w-full top-2 z-30">
+                        <Link className="rounded-lg px-4 py-2" href="/">
+                            <svg className="stroke-zinc-500" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                                <path d="M14.0938 4.8125L7.90625 11L14.0938 17.1875" strokeOpacity="0.7" strokeWidth="2.0625" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        </Link>
+                        <Link className="rounded-lg px-4 py-2" href="#">
+                            <svg className="stroke-zinc-500" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                                <path d="M11.0002 4.58341V12.3751M13.7502 6.41675L11.0002 3.66675L8.25016 6.41675M4.5835 11.0001V15.5834C4.5835 16.0696 4.77665 16.536 5.12047 16.8798C5.46428 17.2236 5.9306 17.4167 6.41683 17.4167H15.5835C16.0697 17.4167 16.536 17.2236 16.8799 16.8798C17.2237 16.536 17.4168 16.0696 17.4168 15.5834V11.0001" strokeOpacity="0.7" strokeWidth="1.83333" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        </Link>
+                    </div>
+                    <input className="absolute form-file__input custom-file-input w-full h-full text-transparent" type="file" onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                        if (e.target.files) {
+                            setFile(e.target.files[0]);
+                        }
+                    }} />
+                    <Image className="object-cover w-full h-72" src={file ? URL.createObjectURL(file) : getItem.event_poster_url === "" ? "/logo.svg" : getItem.event_poster_url} alt="Imagen de cabecera" width={400} height={400} />
+                </figure>
+                <div className="flex justify-center items-center gap-8">
+                    <figure className="w-28">
+                        <Image
+                            className="absolute w-[75xp] h-[75px] top-64 left-8 rounded-full border-[4px] border-white z-20"
+                            src={user ? user.avatar_url : '/Ellipse4.png'}
+                            alt="User image"
+                            height={75}
+                            width={75}
+                        />
                     </figure>
-                    <div className="flex justify-center items-center gap-8">
-                        <figure className="w-28">
-                            <Image
-                                className="absolute w-[75xp] h-[75px] top-64 left-8 rounded-full border-[4px] border-white z-20 sm:mx-12 sm:z-10"
-                                src={user ? user.avatar_url : '/Ellipse4.png'}
-                                alt="User image"
-                                height={75}
-                                width={75}
-                            />
-                        </figure>
-                        <div className="w-full pt-[11px] pb-[6px] px-3 text-left z-20 sm:ml-2">
-                            <textarea
-                                className="text-4xl font-new font-extrabold w-full"
-                                id="name"
-                                required
-                                {...register('name')}
-                            />
+                    <div className="flex justify-end items-end w-full pt-[11px] pb-[6px] px-3 text-left z-20">
+                        <textarea
+                            className="text-4xl font-new font-extrabold w-full ring-2 ring-zinc-800 rounded-xl"
+                            id="name"
+                            required
+                            {...register('name')}
+                        />
+                        <div className="pb-1 pl-2">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path opacity="0.5" d="M12.1618 5.08259C12.3748 4.86955 12.5438 4.61664 12.659 4.33831C12.7743 4.05998 12.8336 3.76167 12.8336 3.46042C12.8335 3.15917 12.7742 2.86087 12.6589 2.58256C12.5436 2.30425 12.3746 2.05138 12.1615 1.83838C11.9485 1.62538 11.6956 1.45643 11.4173 1.34117C11.1389 1.22591 10.8406 1.1666 10.5394 1.16663C9.93096 1.16668 9.34749 1.40842 8.91732 1.83867L8.3999 2.35609L8.42207 2.42084C8.67722 3.15048 9.09468 3.81267 9.64299 4.3575C10.204 4.92192 10.8892 5.3474 11.6438 5.6L12.1618 5.08259Z" fill="black" />
+                                <path d="M8.4227 2.33334L8.39995 2.35551L8.42212 2.42084C8.67727 3.15048 9.09473 3.81268 9.64304 4.35751C10.204 4.92194 10.8892 5.34743 11.6439 5.60001L6.65054 10.5933C6.31337 10.9299 6.14479 11.0985 5.95929 11.2432C5.74035 11.4138 5.50348 11.5601 5.25287 11.6795C5.04054 11.781 4.81479 11.8563 4.3627 12.0068L1.98095 12.8007C1.87196 12.8372 1.75496 12.8426 1.64307 12.8163C1.53118 12.79 1.42883 12.733 1.34753 12.6517C1.26622 12.5705 1.20917 12.4682 1.18278 12.3563C1.15639 12.2445 1.1617 12.1274 1.19812 12.0184L1.99262 9.63609C2.14312 9.18459 2.21837 8.95884 2.31929 8.74651C2.43887 8.49568 2.58529 8.25884 2.7562 8.03951C2.90087 7.85401 3.06945 7.68601 3.40604 7.34943L8.4227 2.33334Z" fill="black" />
+                            </svg>
                         </div>
                     </div>
-                    <div className="px-8 sm:mx-96">
-                        <Input
-                            type="datetime-local"
-                            name="date"
-                            label=""
-                            placeholder="Fecha"
-                            errors={errors}
-                            register={register}
-                        />
-                    </div>
-                    <div className="px-8 sm:mx-96">
-                        <Input
-                            type="number"
-                            name="seats"
-                            label="Límite de inscripciones"
-                            placeholder='0'
-                            errors={errors}
-                            register={register}
-                        />
-                    </div>
-                    <div className="flex justify-center items-center gap-2 px-8 mt-[22px] sm:mx-96">
-                        <Input
-                            type="number"
-                            name="price"
-                            label=""
-                            errors={errors}
-                            register={register}
-                            className="rounded-full h-12 px-6 w-full placeholder-zinc-700 outline-none ring-2 ring-zinc-400 border-transparent text-zinc-400 text-xl font-bold"
-                            startIcon={<p className="text-xl font-bold text-zinc-400">$</p>}
-                        />
-                        <button
-                            className="rounded-[30px] bg-[#030712] h-12 mt-2 w-full text-white font-new text-2xl font-medium"
-                            onClick={() => setValue('price', "0")}>
-                            Gratis
-                        </button>
-                    </div>
-                    <div className="px-8 pt-4 sm:mx-96">
-                        <h2 className="text-xl font-new pb-[11px] pl-[9px]">Acerca del evento</h2>
-                        <textarea
-                            className="rounded-3xl w-full bg-[#D9D9D9] p-[18px] text-pretty text-sm font-new text-[#383838] focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
-                            id="about"
-                            {...register('about')}
-                        />
-                    </div>
-                    <div className="px-8 pt-4 sm:mx-96">
-                        <h2 className="text-xl font-new pb-[11px] pl-[9px]">Ubicación aproximada</h2>
-                        <figure className="rounded-3xl bg-[#030712] text-pretty text-sm font-new overflow-hidden">
-                            <div className="relative h-[240px] w-full">
-                                <LoadScriptNext
-                                    googleMapsApiKey="AIzaSyAcyybGF_nvmxoVvN4V3BZ6meekjSrTpxE"
-                                    loadingElement={<p>Cargando Mapa...</p>}
-                                    id="google-maps-script"
-                                    libraries={['places']}
-                                >
-                                    <div className="rounded-3xl overflow-hidden w-full h-full ">
-                                        <GoogleMap
-                                            mapContainerStyle={{ height: "200px", width: "100%" }}
-                                            center={selectedAddress ? { lat: selectedAddress.lat(), lng: selectedAddress.lng() } : { lat: parseFloat(params.id ? Lat.toString() : "-34.604709378425106"), lng: parseFloat(params.id ? lng.toString() : "-58.43768161222354") }}
-                                            zoom={13}
-                                            options={{
-                                                disableDefaultUI: true, // Desactiva todos los controles predeterminados del mapa
-                                                styles: [
-                                                    {
-                                                        featureType: "water",
-                                                        elementType: "geometry",
-                                                        stylers: [
-                                                            { color: "#193341" }
-                                                        ]
-                                                    },
-                                                    {
-                                                        featureType: "landscape",
-                                                        elementType: "geometry",
-                                                        stylers: [
-                                                            { color: "#09090b" }
-                                                        ]
-                                                    },
-                                                    {
-                                                        featureType: "road",
-                                                        elementType: "geometry",
-                                                        stylers: [
-                                                            { color: "#27272a" } // Oculta iconos de carretera como peajes, estaciones de servicio, etc.
-                                                        ]
-                                                    },
-                                                    {
-                                                        featureType: "poi",
-                                                        stylers: [
-                                                            { visibility: "off" } // Oculta puntos de interés como tiendas, restaurantes, etc.
-                                                        ]
-                                                    },
-                                                    {
-                                                        featureType: "transit",
-                                                        elementType: "labels.icon",
-                                                        stylers: [
-                                                            { visibility: "off" } // Oculta iconos de transporte público
-                                                        ]
-                                                    },
-                                                    {
-                                                        featureType: "road",
-                                                        elementType: "labels.icon",
-                                                        stylers: [
-                                                            { visibility: "off" } // Oculta iconos de carretera como peajes, estaciones de servicio, etc.
-                                                        ]
-                                                    },
-                                                    {
-                                                        featureType: "administrative",
-                                                        elementType: "labels.text.fill",
-                                                        stylers: [
-                                                            { color: "#ffffff" } // Cambia el color del texto administrativo (por ejemplo, el nombre de las ciudades)
-                                                        ]
-                                                    },
-                                                    {
-                                                        featureType: "administrative.locality",
-                                                        elementType: "labels.text.fill",
-                                                        stylers: [
-                                                            { visibility: "off" } // Oculta el nombre de las localidades (ciudades, pueblos, etc.)
-                                                        ]
-                                                    },
-                                                    {
-                                                        featureType: "administrative.neighborhood",
-                                                        elementType: "labels.text.fill",
-                                                        stylers: [
-                                                            { visibility: "off" } // Oculta el nombre de los barrios
-                                                        ]
-                                                    },
-                                                    {
-                                                        featureType: "road",
-                                                        elementType: "labels.text.fill",
-                                                        stylers: [
-                                                            { visibility: "off" } // Oculta iconos de carretera como peajes, estaciones de servicio, etc.
-                                                        ]
-                                                    },
-                                                ]
-                                            }}
-                                        >
-                                            {selectedAddress && (
-                                                <Marker
-                                                    position={{
-                                                        lat: selectedAddress.lat(),
-                                                        lng: selectedAddress.lng()
-                                                    }}
-                                                />
-                                            )}
-                                        </GoogleMap>
-                                        <figcaption className="px-4 py-[10px] text-white font-new text-sm absolute bottom-0 left-0 w-full">
-                                            <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
-                                                <input
-                                                    type="text"
-                                                    placeholder="Ingresa una dirección"
-                                                    className="w-full bg-transparent text-white border-none outline-none"
-                                                    {...register('location')}
-                                                />
-                                            </Autocomplete>
-                                        </figcaption>
-                                    </div>
-                                </LoadScriptNext>
-                            </div>
-                        </figure>
-                    </div>
-                    <div className="flex justify-center items-center w-full py-9">
-                        <button
-                            type="submit"
-                            className="rounded-[25px] bg-[#030712] h-[60px] w-72 text-white font-new text-2xl font-normal"
-                        >
-                            {params.id ? 'Editar evento' : 'Crear evento'}
-                        </button>
-                    </div>
-                </form>
-            </section>
-
-            <div className='hidden sm:inline'>
-              <Footer />
-            </div>
-
-            
-        </div>
+                </div>
+                <div className="px-8">
+                    <Input
+                        type="datetime-local"
+                        name="date"
+                        label=""
+                        placeholder="Fecha"
+                        errors={errors}
+                        register={register}
+                    />
+                </div>
+                <div className="px-8">
+                    <Input
+                        type="number"
+                        name="seats"
+                        label="Límite de inscripciones"
+                        placeholder='0'
+                        errors={errors}
+                        register={register}
+                    />
+                </div>
+                <div className="flex justify-center items-center gap-2 px-8 mt-[22px]">
+                    <Input
+                        type="number"
+                        name="price"
+                        label=""
+                        errors={errors}
+                        register={register}
+                        className="rounded-full h-12 px-6 w-full placeholder-zinc-700 outline-none ring-2 ring-zinc-400 border-transparent text-zinc-400 text-xl font-bold"
+                        startIcon={<p className="text-xl font-bold text-zinc-400">$</p>}
+                    />
+                    <button
+                        className="rounded-[30px] bg-[#030712] h-12 mt-2 w-full text-white font-new text-2xl font-medium"
+                        onClick={() => setValue('price', "0")}>
+                        Gratis
+                    </button>
+                </div>
+                <div className="px-8 pt-4">
+                    <h2 className="text-xl font-new pb-[11px] pl-[9px]">Acerca del evento</h2>
+                    <textarea
+                        className="rounded-3xl w-full bg-[#D9D9D9] p-[18px] text-pretty text-sm font-new text-[#383838] focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
+                        id="about"
+                        {...register('about')}
+                    />
+                </div>
+                <div className="px-8 pt-4">
+                    <h2 className="text-xl font-new pb-[11px] pl-[9px]">Ubicación aproximada</h2>
+                    <figure className="rounded-3xl bg-[#030712] text-pretty text-sm font-new overflow-hidden">
+                        <div className="relative h-[240px] w-full">
+                            <LoadScriptNext
+                                googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string}
+                                loadingElement={<p>Cargando Mapa...</p>}
+                                id="google-maps-script"
+                                libraries={['places']}
+                            >
+                                <div className="rounded-3xl overflow-hidden w-full h-full ">
+                                    <GoogleMap
+                                        mapContainerStyle={{ height: "200px", width: "100%" }}
+                                        center={selectedAddress ? { lat: selectedAddress.lat(), lng: selectedAddress.lng() } : { lat: parseFloat(params.id ? Lat.toString() : "-34.604709378425106"), lng: parseFloat(params.id ? lng.toString() : "-58.43768161222354") }}
+                                        zoom={13}
+                                        options={{
+                                            disableDefaultUI: true, // Desactiva todos los controles predeterminados del mapa
+                                            styles: [
+                                                {
+                                                    featureType: "water",
+                                                    elementType: "geometry",
+                                                    stylers: [
+                                                        { color: "#193341" }
+                                                    ]
+                                                },
+                                                {
+                                                    featureType: "landscape",
+                                                    elementType: "geometry",
+                                                    stylers: [
+                                                        { color: "#09090b" }
+                                                    ]
+                                                },
+                                                {
+                                                    featureType: "road",
+                                                    elementType: "geometry",
+                                                    stylers: [
+                                                        { color: "#27272a" } // Oculta iconos de carretera como peajes, estaciones de servicio, etc.
+                                                    ]
+                                                },
+                                                {
+                                                    featureType: "poi",
+                                                    stylers: [
+                                                        { visibility: "off" } // Oculta puntos de interés como tiendas, restaurantes, etc.
+                                                    ]
+                                                },
+                                                {
+                                                    featureType: "transit",
+                                                    elementType: "labels.icon",
+                                                    stylers: [
+                                                        { visibility: "off" } // Oculta iconos de transporte público
+                                                    ]
+                                                },
+                                                {
+                                                    featureType: "road",
+                                                    elementType: "labels.icon",
+                                                    stylers: [
+                                                        { visibility: "off" } // Oculta iconos de carretera como peajes, estaciones de servicio, etc.
+                                                    ]
+                                                },
+                                                {
+                                                    featureType: "administrative",
+                                                    elementType: "labels.text.fill",
+                                                    stylers: [
+                                                        { color: "#ffffff" } // Cambia el color del texto administrativo (por ejemplo, el nombre de las ciudades)
+                                                    ]
+                                                },
+                                                {
+                                                    featureType: "administrative.locality",
+                                                    elementType: "labels.text.fill",
+                                                    stylers: [
+                                                        { visibility: "off" } // Oculta el nombre de las localidades (ciudades, pueblos, etc.)
+                                                    ]
+                                                },
+                                                {
+                                                    featureType: "administrative.neighborhood",
+                                                    elementType: "labels.text.fill",
+                                                    stylers: [
+                                                        { visibility: "off" } // Oculta el nombre de los barrios
+                                                    ]
+                                                },
+                                                {
+                                                    featureType: "road",
+                                                    elementType: "labels.text.fill",
+                                                    stylers: [
+                                                        { visibility: "off" } // Oculta iconos de carretera como peajes, estaciones de servicio, etc.
+                                                    ]
+                                                },
+                                            ]
+                                        }}
+                                    >
+                                        {selectedAddress && (
+                                            <Marker
+                                                position={{
+                                                    lat: selectedAddress.lat(),
+                                                    lng: selectedAddress.lng()
+                                                }}
+                                            />
+                                        )}
+                                    </GoogleMap>
+                                    <figcaption className="px-4 py-[10px] text-white font-new text-sm absolute bottom-0 left-0 w-full">
+                                        <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
+                                            <input
+                                                type="text"
+                                                placeholder="Ingresa una dirección"
+                                                className="w-full bg-transparent text-white border-none outline-none"
+                                                {...register('location')}
+                                            />
+                                        </Autocomplete>
+                                    </figcaption>
+                                </div>
+                            </LoadScriptNext>
+                        </div>
+                    </figure>
+                </div>
+                <div className="flex justify-center items-center w-full py-9">
+                    <button
+                        type="submit"
+                        className="rounded-[25px] bg-[#030712] h-[60px] w-72 text-white font-new text-2xl font-normal"
+                    >
+                        {params.id ? 'Editar evento' : 'Crear evento'}
+                    </button>
+                </div>
+            </form>
+        </section>
     );
 }

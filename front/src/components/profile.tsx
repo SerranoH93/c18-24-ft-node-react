@@ -17,7 +17,7 @@ export default function Profile() {
     }
 
     return (
-        <div className="flex flex-row gap-1">
+        <div className="flex flex-row gap-3">
             <Link href={`/mis-entradas/${user?.id}`} className="flex justify-center"><img src="/ticket.svg" alt="" /></Link>
             <button><img src="/favorite.svg" alt="" /></button>
             <button><img src="/notifications.svg" alt="" /></button>

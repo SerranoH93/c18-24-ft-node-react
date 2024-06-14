@@ -114,6 +114,7 @@ export const retrieveEventByUUID = async (req, res) => {
             celebrity_alias: true,
             users: {
               select: {
+                id: true,
                 avatar_url: true,
               },
             },

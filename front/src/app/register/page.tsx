@@ -64,7 +64,7 @@ export default function Register() {
     return (
         <div className="flex flex-col mt-10 ml-8 mr-8">
             <div className='text-[color:var(--text-color)]' id="title">
-                <h2 className="text-4xl">Bienvenido</h2>
+                <h2 className="text-4xl font-BeseNeue">Bienvenido</h2>
                 <p>completa tus datos</p>
                 <p>o continua con las redes sociales</p>
             </div>
@@ -113,7 +113,7 @@ export default function Register() {
                     placeholder='Ingresa tu contraseña'
                     type={passwordVisible ? 'text' : 'password'}
                     errors={errors}
-                    icon={<button type="button" onClick={togglePasswordVisibility}>{passwordVisible ? <img src="/visibility.svg" alt="" /> : <img src="/visibility.svg" alt="" />}</button>}
+                    icon={<button type="button" onClick={togglePasswordVisibility}>{passwordVisible ? <img src="/visibilityOff.svg" alt="" /> : <img src="/visibilityOn.svg" alt="" />}</button>}
                 />
                 <Input
                     label="Confirmar contraseña"
@@ -122,7 +122,7 @@ export default function Register() {
                     placeholder='Repetir contraseña'
                     type={passwordVisible ? 'text' : 'password'}
                     errors={errors}
-                    icon={<button type="button" onClick={togglePasswordVisibility}>{passwordVisible ? <img src="/visibility.svg" alt="" /> : <img src="/visibility.svg" alt="" />}</button>}
+                    icon={<button type="button" onClick={togglePasswordVisibility}>{passwordVisible ? <img src="/visibilityOff.svg" alt="" /> : <img src="/visibilityOn.svg" alt="" />}</button>}
                 />
 
                 <Input
@@ -135,10 +135,10 @@ export default function Register() {
                 />
 
 
-                <button type='submit' className="h-16 bg-black text-gray-100 rounded-full mt-7">Registrate</button>
+                <button type='submit' className="h-16 bg-[#030712] text-gray-100 rounded-full mt-7">Registrate</button>
             </form>
 
-            <div className="flex flex-col items-center mt-5 mb-5">
+            <div className="flex flex-col items-center text-center text-xs my-5">
                 <p>Al registrarte aceptas nuestros <a className='font-bold underline' href="#">Términos y condiciones</a> y <a className='font-bold underline' href="#">Políticas de privacidad.</a></p>
             </div>
         </div>
