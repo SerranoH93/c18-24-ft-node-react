@@ -26,7 +26,7 @@ export function useFetch() {
   }: AuthFetchProps) => {
     try {
       const { data } = await axios({
-        url: `https://deploytest-tc4w.onrender.com/api/${endpoint}`,
+        url: `http://localhost:3001/api/${endpoint}`,
         method,
         data: formData,
         ...options,

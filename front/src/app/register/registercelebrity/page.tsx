@@ -6,6 +6,8 @@ import { userAuthStore } from '@/store/userAuthStore';
 import { useFetchHook } from '@/hooks/useFetchHook';
 import { useForm } from "react-hook-form";
 import Input from "@/components/input";
+import Link from 'next/link';
+import Image from 'next/image';
 
 type Inputs = {
     user: string;
@@ -66,7 +68,13 @@ export default function RegisterEvent() {
 
     return (
         <section className='flex flex-col mt-10 ml-8 mr-8'>
-            <h1 className='text-[color:var(--text-color)] text-4xl font-BeseNeue '>Regístrate<br />como artista</h1>
+            <Link className='flex flex-col gap-2 mb-4' href="/">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="21" viewBox="0 0 22 21" fill="none">
+                    <path d="M14.0938 4.59375L7.90625 10.5L14.0938 16.4062" stroke="black" stroke-width="2.0625" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <Image src="/logo.svg" alt="Logo" width={100} height={41} />
+            </Link>
+            <h1 className='text-[#030712] text-4xl font-BeseNeue '>Regístrate<br />como artista</h1>
             <form onSubmit={onSubmit} className="flex flex-col gap-2">
                 <Input
                     label="Usuario"

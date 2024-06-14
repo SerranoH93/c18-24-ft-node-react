@@ -6,6 +6,8 @@ import { useFetchHook } from "@/hooks/useFetchHook";
 import { useForm } from "react-hook-form";
 import Input from "@/components/input";
 import { useState } from "react";
+import Image from 'next/image';
+import Link from 'next/link';
 
 
 type Inputs = {
@@ -63,7 +65,13 @@ export default function Register() {
 
     return (
         <div className="flex flex-col mt-10 ml-8 mr-8">
-            <div className='text-[color:var(--text-color)]' id="title">
+            <div className='text-[#030712]' id="title">
+                <Link className='flex flex-col gap-2 mb-4' href="/">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="21" viewBox="0 0 22 21" fill="none">
+                        <path d="M14.0938 4.59375L7.90625 10.5L14.0938 16.4062" stroke="black" stroke-width="2.0625" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <Image src="/logo.svg" alt="Logo" width={100} height={41} />
+                </Link>
                 <h2 className="text-4xl font-BeseNeue">Bienvenido</h2>
                 <p>completa tus datos</p>
                 <p>o continua con las redes sociales</p>
