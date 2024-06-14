@@ -30,7 +30,7 @@ export const fetchEvents = async (
 ): Promise<Event[]> => {
   try {
     const { data } = await axios({
-      url: `http://localhost:3001/api/${endpoint}`,
+      url: `https://deploytest-tc4w.onrender.com/api/${endpoint}`,
       method: "get",
       ...options,
     });

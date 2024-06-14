@@ -8,11 +8,18 @@ import { userAuthStore } from "@/store/userAuthStore";
 import { useFetchHook } from "@/hooks/useFetchHook";
 import { Avatar, AvatarGroup } from "@nextui-org/avatar";
 import { Modal, ModalBody, ModalContent, useDisclosure } from "@nextui-org/react";
+import { get } from "http";
 
 interface Params {
     id: string[];
 }
-
+interface User {
+    users: {
+        first_name: string;
+        last_name: string;
+        avatar_url: string;
+    }
+}
 export default function App({ params }: { params: Params }) {
     const user = userAuthStore((state) => state.user);
     const id = params.id[0]
@@ -21,7 +28,6 @@ export default function App({ params }: { params: Params }) {
     const [datosCargados, setDatosCargados] = useState(false);
     const [scriptLoaded, setScriptLoaded] = useState(false);
     const [getItem, setGetItem] = useState({
-        id: "",
         name: "",
         about: "",
         date: "",
@@ -29,11 +35,12 @@ export default function App({ params }: { params: Params }) {
         location: "",
         price: "",
         event_poster_url: "",
-        celebrity_id: "",
         avatar_url: "",
         uuid: "",
         users: [],
-        isUserRegistered: ''
+        isUserRegistered: '',
+        celebrities_id: '',
+        closed: ''
     });
     console.log("Datos extraídos:", getItem);
 
@@ -48,19 +55,19 @@ export default function App({ params }: { params: Params }) {
         console.log(res);
 
         setGetItem({
-            id: res.data.id,
             name: res.data.name,
             about: res.data.about,
             date: res.data.date,
             seats: res.data.seats,
             location: res.data.location,
-            price: res.data.price,
+            price: String(res.data.price),
             event_poster_url: res.data.event_poster_url, // data.data.event_poster_url || null,
-            celebrity_id: id,
             avatar_url: res.data.celebrities.users.avatar_url,
             uuid: res.data.uuid,
             users: res.data.users,
-            isUserRegistered: res.data.isUserRegistered
+            isUserRegistered: String(res.data.isUserRegistered),
+            celebrities_id: String(res.data.celebrities.users.id),
+            closed: String(res.data.closed)
         });
         setDatosCargados(true);
     }
@@ -123,6 +130,31 @@ export default function App({ params }: { params: Params }) {
             </section>
         );
     }
+    const setRegister = async () => {
+        await getUseFetch({
+            endpoint: `users_events/register`,
+            formData: {
+                user_id: id,
+                event_uuid: uuid,
+            },
+            method: 'post',
+            options: {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+            }
+        });
+        getTask();
+    }
+    const setClose = async () => {
+        await getUseFetch({
+            endpoint: `events/close/${uuid}`,
+            method: 'get',
+
+        });
+        getTask();
+    }
+    const renderMapInfo = ((getItem.celebrities_id === id) || (getItem.closed === "true" && getItem.isUserRegistered === "true"))
 
     return (
         <section className="flex flex-col pb-10">
@@ -145,7 +177,7 @@ export default function App({ params }: { params: Params }) {
                 <figure className="w-28">
                     <Image
                         className="absolute w-[75xp] h-[75px] top-64 left-8 rounded-full border-[4px] border-white z-20"
-                        src={user ? user.avatar_url : '/Ellipse4.png'}
+                        src={getItem.avatar_url}
                         alt="User image"
                         height={75}
                         width={75}
@@ -176,11 +208,11 @@ export default function App({ params }: { params: Params }) {
                                 size="sm"
                             >
                                 {
-                                    getItem.users.map((user) => {
+                                    getItem.users.map((user: User) => {
                                         return (
                                             <Avatar classNames={{
                                                 base: "border-2 border-[#030712]",
-                                            }} src={user.avatar_url} />
+                                            }} src={user.users.avatar_url} />
                                         )
                                     })
                                 }
@@ -202,12 +234,9 @@ export default function App({ params }: { params: Params }) {
             </div>
             <div className="flex justify-center gap-4 items-center w-full px-8 py-5">
 
-                <button className="rounded-full h-12 w-1/2 px-6  placeholder-zinc-700 outline-none ring-2 ring-zinc-400 border-transparent text-zinc-400 text-lg font-bold">
+                <button className="rounded-full h-12 w-full px-6  outline-none ring-2 ring-[#030712] border-transparent text-[#030712] text-lg font-bold">
                     {getItem.price === "0" ? "Entrada gratuita" : `Entrada $${getItem.price}`}
                 </button>
-                {/* <button className="rounded-[30px] bg-[#030712] h-12 w-1/2 text-white font-new text-lg font-medium">
-                    {getItem.price === "0" ? "Gratis" : `Comprar entrada`}
-                </button> */}
             </div>
             <div className="px-8 pt-4">
                 <h2 className="text-xl font-new pb-[11px] pl-[9px]">Ubicación aproximada</h2>
@@ -216,7 +245,7 @@ export default function App({ params }: { params: Params }) {
                         {window.google && window.google.maps && (
                             <div className="rounded-3xl overflow-hidden w-full h-full ">
                                 <GoogleMap
-                                    mapContainerStyle={{ height: "200px", width: "100%" }}
+                                    mapContainerStyle={{ height: `${renderMapInfo ? "200px" : "260px"}`, width: "100%" }}
                                     center={{ lat: Lat, lng: lng }}
                                     zoom={13}
                                     options={{
@@ -302,36 +331,67 @@ export default function App({ params }: { params: Params }) {
                                             lng: lng
                                         }}
                                         options={
-                                            {
-                                                icon: {
-                                                    url: "/Ellipse12.png",
-                                                    scaledSize: new window.google.maps.Size(200, 200),
-                                                    anchor: new window.google.maps.Point(100, 100)
+                                            getItem.closed === "true" && getItem.isUserRegistered === "true" ? {} :
+                                                {
+                                                    icon: {
+                                                        url: "/Ellipse12.png",
+                                                        scaledSize: new window.google.maps.Size(200, 200),
+                                                        anchor: new window.google.maps.Point(100, 100)
+                                                    }
                                                 }
-                                            }
                                         }
                                     />
 
                                 </GoogleMap>
                             </div>
                         )}
-                        <div className="px-4 py-[10px] text-white font-new text-sm absolute bottom-0 left-0 w-full">
+
+                        {renderMapInfo && <div className="px-4 py-[10px] text-white font-new text-sm absolute bottom-0 left-0 w-full">
                             {nameLocation}
-                        </div>
+                        </div>}
                     </div>
                 </div>
             </div>
             <div className="flex justify-center items-center w-full py-9">
                 {
-                    getItem.isUserRegistered === "true" ? (
-                        <button className="rounded-[25px] bg-[#030712] h-[60px] w-72 text-white font-new text-2xl font-normal">
-                            Inscripto
-                        </button>
-                    ) : (
-                        <button className="rounded-[25px] bg-[#030712] h-[60px] w-72 text-white font-new text-2xl font-normal">
-                            Inscribirse
-                        </button>
-                    )
+                    getItem.celebrities_id === id ?
+                        (
+                            <div className="flex w-full justify-between items-center px-12">
+                                <button className="rounded-[25px] bg-[#4E4E4E] h-[37px] w-40 px-4 text-white font-new text-xs font-normal">
+                                    Eliminar
+                                    evento
+                                </button>
+                                {
+                                    getItem.closed === "true" ? (
+                                        <button className="rounded-[25px] bg-[#030712] h-[37px] w-40 px-4 text-white font-new text-xs font-normal">
+                                            Evento cerrado
+                                        </button>
+                                    ) : (
+                                        <button onClick={setClose} className="rounded-[25px] bg-[#363DDA] h-[37px] w-40 px-4 text-white font-new text-xs font-normal">
+                                            Cerrar
+                                            evento
+                                        </button>
+                                    )
+                                }
+                            </div>
+                        ) : getItem.closed === "true" ?
+                            (
+                                <button className="rounded-[25px] bg-[#030712] h-[60px] w-72 text-white font-new text-2xl font-normal">
+                                    Evento cerrado
+                                </button>
+                            )
+                            : getItem.isUserRegistered === "true" ?
+                                (
+                                    <button className="rounded-[25px] bg-[#030712] h-[60px] w-72 text-white font-new text-2xl font-normal">
+                                        Inscripto
+                                    </button>
+                                ) :
+                                (
+                                    <button onClick={setRegister} className="rounded-[25px] bg-[#030712] h-[60px] w-72 text-white font-new text-2xl font-normal">
+                                        Inscribirse
+                                    </button>
+                                )
+
                 }
             </div>
             <div className="pt-4">
@@ -379,13 +439,13 @@ export default function App({ params }: { params: Params }) {
                             <ModalBody>
                                 {
                                     getItem.users.length > 0 ?
-                                        getItem.users.map((user) => {
+                                        getItem.users.map((user: User) => {
                                             return (
                                                 <div className="flex gap-4 items-center">
                                                     <Avatar classNames={{
                                                         base: "border-2 border-[#030712]",
-                                                    }} src={user.avatar_url} />
-                                                    <p>{user.name}</p>
+                                                    }} src={user.users.avatar_url} />
+                                                    <p>{user.users.first_name}&nbsp;{user.users.last_name}</p>
                                                 </div>
                                             )
                                         }) : <p className="text-xl text-center text-zinc-500">Aun no hay inscripciones</p>

@@ -17,7 +17,7 @@ export default function App(params: Params) {
     const { id } = params.params;
 
     const getEvents = async () => {
-        const data = await getUseFetch({
+        const { data } = await getUseFetch({
             endpoint: `users_events/${id}`,//${user id de la sesión}`,
             method: 'get'
         });
@@ -29,6 +29,11 @@ export default function App(params: Params) {
         getEvents()
     }
         , []);
+    //Split de la ubicación
+    // let location = getItem.events.location.split('/');
+    // const nameLocation = location[0];
+    // const Lat = parseFloat(location[1]);
+    // const lng = parseFloat(location[2]);
     return (
         <section className="mt-14 mx-6">
             <div className=" flex flex-row items-center justify-between">
@@ -38,7 +43,7 @@ export default function App(params: Params) {
                 <div><Profile /> </div>
             </div>
             <div>
-                <h1 className="text-3xl font-bold mt-4">Mis entradas</h1>
+                <h1 className="text-3xl font-bold mt-4 font-BeseNeue">Mis entradas</h1>
                 <hr />
                 {getItem.length > 0 ? <p className="text-gray-400">Aquí se mostraran sus eventos</p> : <p className="text-gray-400">No tienes eventos</p>}
             </div>
@@ -51,11 +56,11 @@ export default function App(params: Params) {
                             <div className="flex flex-row gap-3 my-4">
                                 <div>
                                     <Image
-                                        className="rounded-xl object-cover w-40 h-[200px]"
+                                        className="rounded-xl object-cover w-80 h-[200px]"
                                         src={item.events.event_poster_url}
                                         alt="Evento"
-                                        width={100}
-                                        height={100} />
+                                        width={320}
+                                        height={200} />
                                 </div>
                                 <div className="mt-[10px]">
                                     <h2 className="text-xl font-bold font-new">{item.events.name}</h2>
