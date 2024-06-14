@@ -17,12 +17,40 @@ export const registerUserEvent = async (req, res) => {
     where: {
       uuid: req.body.event_uuid,
     },
+    select: {
+      users: true,
+    },
   });
 
   await prisma.$disconnect();
 
   if (!eventData) {
     return res.status(404).json({ message: "Evento no existe." });
+  }
+
+  const userEventData = await prisma.users_events.findFirst({
+    where: {
+      user_id: Number(req.body.user_id),
+      event_uuid: req.body.event_uuid,
+    },
+  });
+
+  await prisma.$disconnect();
+
+  if (userEventData) {
+    return res
+      .status(409)
+      .json({ message: "Usuario ya registrado en el evento." });
+  }
+
+  if (eventData.closed) {
+    return res
+      .status(404)
+      .json({ message: "Evento no admite nuevos registros." });
+  }
+
+  if (eventData.users.length > eventData.seats) {
+    return res.status(404).json({ message: "Evento sin cupos disponibles." });
   }
 
   await prisma.users_events.create({
