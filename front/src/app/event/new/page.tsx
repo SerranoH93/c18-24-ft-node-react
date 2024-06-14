@@ -197,14 +197,14 @@ export default function CreateEvent() {
                     <div className="flex justify-center items-center gap-8">
                         <figure className="w-28">
                             <Image
-                                className="absolute w-[75xp] h-[75px] top-64 left-8 rounded-full border-[4px] border-white z-20"
+                                className="absolute w-[75xp] h-[75px] top-64 left-8 rounded-full border-[4px] border-white z-20 sm:mx-12 sm:z-10"
                                 src={user ? user.avatar_url : '/Ellipse4.png'}
                                 alt="User image"
                                 height={75}
                                 width={75}
                             />
                         </figure>
-                        <div className="w-full pt-[11px] pb-[6px] px-3 text-left z-20">
+                        <div className="w-full pt-[11px] pb-[6px] px-3 text-left z-20 sm:ml-2">
                             <textarea
                                 className="text-4xl font-new font-extrabold w-full"
                                 id="name"
@@ -213,7 +213,7 @@ export default function CreateEvent() {
                             />
                         </div>
                     </div>
-                    <div className="px-8">
+                    <div className="px-8 sm:mx-96">
                         <Input
                             type="datetime-local"
                             name="date"
@@ -223,7 +223,7 @@ export default function CreateEvent() {
                             register={register}
                         />
                     </div>
-                    <div className="px-8">
+                    <div className="px-8 sm:mx-96">
                         <Input
                             type="number"
                             name="seats"
@@ -233,7 +233,7 @@ export default function CreateEvent() {
                             register={register}
                         />
                     </div>
-                    <div className="flex justify-center items-center gap-2 px-8 mt-[22px]">
+                    <div className="flex justify-center items-center gap-2 px-8 mt-[22px] sm:mx-96">
                         <Input
                             type="number"
                             name="price"
@@ -249,7 +249,7 @@ export default function CreateEvent() {
                             Gratis
                         </button>
                     </div>
-                    <div className="px-8 pt-4">
+                    <div className="px-8 pt-4 sm:mx-96">
                         <h2 className="text-xl font-new pb-[11px] pl-[9px]">Acerca del evento</h2>
                         <textarea
                             className="rounded-3xl w-full bg-[#D9D9D9] p-[18px] text-pretty text-sm font-new text-[#383838] focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
@@ -257,7 +257,7 @@ export default function CreateEvent() {
                             {...register('about')}
                         />
                     </div>
-                    <div className="px-8 pt-4">
+                    <div className="px-8 pt-4 sm:mx-96">
                         <h2 className="text-xl font-new pb-[11px] pl-[9px]">Ubicación aproximada</h2>
                         <figure className="rounded-3xl bg-[#030712] text-pretty text-sm font-new overflow-hidden">
                             <div className="relative h-[240px] w-full">
@@ -382,7 +382,11 @@ export default function CreateEvent() {
                 </form>
             </section>
 
-            <Footer />
+            <div className='hidden sm:inline'>
+              <Footer />
+            </div>
+
+            
         </div>
     );
 }
